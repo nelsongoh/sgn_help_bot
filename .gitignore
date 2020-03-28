@@ -5,5 +5,5 @@ node_modules
 data-pull-local.js
 test.html
 dolores_local_key.json
-.code-workspace
+*.code-workspace
 .gcloudignore
