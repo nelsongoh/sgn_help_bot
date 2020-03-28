@@ -1,0 +1,9 @@
+# These are the list of files / folders that Git should ignore 
+node_modules
+.env
+.git
+data-pull-local.js
+test.html
+dolores_local_key.json
+.code-workspace
+.gcloudignore
