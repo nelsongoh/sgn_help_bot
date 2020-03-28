@@ -1,0 +1,31 @@
+{
+  "name": "sgn_sydney_bot",
+  "version": "1.0.0",
+  "description": "This is a telegram bot for Singaporeans in Sydney, who are currently staying put, or waiting for the next flight back to Singapore, in light of the COVID-19 situation.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nelsongoh/sgn_sydney_bot.git"
+  },
+  "keywords": [
+    "telegram"
+  ],
+  "author": "Nelson Goh Wei Qiang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nelsongoh/sgn_sydney_bot/issues"
+  },
+  "homepage": "https://github.com/nelsongoh/sgn_sydney_bot#readme",
+  "dependencies": {
+    "@google-cloud/firestore": "^3.7.1",
+    "axios": "^0.19.2",
+    "body-parser": "^1.19.0",
+    "cheerio": "^1.0.0-rc.3",
+    "express": "^4.17.1",
+    "node-telegram-bot-api": "^0.40.0"
+  }
+}

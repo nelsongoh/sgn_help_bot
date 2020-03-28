@@ -1,0 +1,6 @@
+runtime: nodejs10
+
+env_variables:
+  TELEGRAM_BOT_TOKEN: "1015681805:AAEHaQ3OtboxYxIegDSOx2CX7hQqPHKv-yM"
+  WEBHOOK_TOKEN: "IVg1431QcnP3HPJoLQjUTxhBwKSuba9v"
+  WEBHOOK_URL: "https://uncle-lee-bot-272115.appspot.com"

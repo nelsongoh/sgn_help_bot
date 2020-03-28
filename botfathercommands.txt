@@ -1,0 +1,5 @@
+help - List of commands you can use with the bot
+info - List of resources to guide you through the COVID-19 situation
+fltstatus - List of flight statuses for SQ and Scoot
+chats - Known chat groups for Singaporeans in and around Australia
+getcases - Number of COVID-19 cases in Australia currently

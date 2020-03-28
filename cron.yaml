@@ -1,0 +1,5 @@
+cron:
+- description: "COVID-19 cases update (Australia)"
+  url: /covid-19/au/fetch
+  schedule: every 3 hours synchronized
+  timezone: Australia/Sydney
