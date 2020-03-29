@@ -30,11 +30,11 @@ module.exports = {
   generateRegGrpChatRegions: (grpChatId) => {
     let Types = require('./type_constants');
     let regions = {
-      'Singapore': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]sg[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
-      'Australia / New Zealand': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]au_nz[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
-      'Europe / United Kingdom': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]eu_uk[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
-      'North America': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]na[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
-      'Rest of the World': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]rotw[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]'
+      'Singapore': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.SG + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
+      'Australia / New Zealand': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.AU_NZ + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
+      'Europe / United Kingdom': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.EU_UK + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
+      'North America': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.NA + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
+      'Rest of the World': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.ROTW + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]'
     };
 
     return regions;
