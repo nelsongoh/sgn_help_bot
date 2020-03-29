@@ -26,6 +26,13 @@ module.exports = {
     '((?=(.|\n)*invest)(?=(.|\n)*profit)(?=(.|\n)*http))', '|',
     '(?=(.|\n)*AAAAAFY3TYmivxjQejlZPA)', '|',
     '(?=(.|\n)*AAAAAFDE45as4-4bvyhcYg)',
+    '(?=(.|\n)*AAAAAFXxeszLtcGrtm77zQ)',
+    '(?=(.|\n)*AAAAAFTT2-iEJvoBrlrexA)',
+    '((?=(.|\n)*thank)(?=(.|\n)*fin)(?=(.|\n)*http))', '|',
+    '((?=(.|\n)*thank)(?=(.|\n)*invest)(?=(.|\n)*http))', '|',
+    '((?=(.|\n)*thank)(?=(.|\n)*earn)(?=(.|\n)*http))', '|',
+    '((?=(.|\n)*cap)(?=(.|\n)*\$)(?=(.|\n)*http))', '|',
+    '((?=(.|\n)*trad)(?=(.|\n)*pay)(?=(.|\n)*http))', '|',
     '/i'
   ].join('')),
 };
