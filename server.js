@@ -83,15 +83,20 @@ app.get("/covid-19/au/announce", (req, res) => {
   covidCases.getCovidCasesAU().then((caseInfo) => {
     // Then we retrieve the group chats who are in the AU / NZ region
     groupAdmin.getRegionChatIds(Types.AU_NZ).then((chatIdList) => {
-      // For each chat ID in the list
-      for (let chatId in chatIdList) {
-        // We announce it to the chat
-        uncleLeeBot.sendMessage(
-          Number(chatId),
-          caseInfo
-        );
+      if (chatIdList !== null) {
+        // For each chat ID in the list
+        for (let idx in chatIdList) {
+          // We announce it to the chat
+          uncleLeeBot.sendMessage(
+            chatIdList[idx],
+            caseInfo
+          );
+        }
+        res.sendStatus(200);
       }
-      res.sendStatus(200);
+      else {
+        res.sendStatus(500);
+      }
     });
   })
   .catch((err) => {
