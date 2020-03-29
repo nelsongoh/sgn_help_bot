@@ -1,4 +1,30 @@
 module.exports = {
+  getBroadcastInfo: (regionName) => {
+    let Firestore = require('@google-cloud/firestore');
+    let db = new Firestore();
+
+    let grpChatsRef = db.collection('grpChats');
+    let query = grpChatsRef.where('region', '==', regionName);
+
+    return query.get()
+      .then((snapshot) => {
+        if (snapshot.empty) {
+          return null;
+        }
+
+        let chatIdMsgObj = {};
+
+        snapshot.forEach((doc) => {
+          chatIdMsgObj[doc.id] = doc.data()['grpChatMsg']
+        });
+
+        return chatIdMsgObj;
+      })
+      .catch((err) => {
+        throw err;
+      })
+  },
+
   updateGrpChatRegion: (chatId, chatRegion) => {
     let Firestore = require('@google-cloud/firestore');
     let db = new Firestore();
@@ -31,21 +57,6 @@ module.exports = {
     .catch(() => {
       return false; // Else if there's an error, return false
     })
-  },
-
-  getGrpChatMsg: (regionName) => {
-    this.getGroupChatIdViaRegion(regionName)
-      .then((chatId) => {
-        // Using the group chat ID, retrieve the group chat message to broadcast
-        // DB ACTION HERE
-      })
-      .catch((err) => {
-        throw err;
-      })
-  },
-
-  getGroupChatIdViaRegion: (regionName) => {
-    
   },
 
   getListenerId: (userId) => {
