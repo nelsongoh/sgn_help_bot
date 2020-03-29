@@ -7,11 +7,16 @@ module.exports = {
   cmdFltStatus: /^\/fltstatus$/i,
   cmdChats: /^\/chats$/i,
   cmdGetCases: /^\/getcases$/i,
+  cmdIdMe: /^\/idme$/,
   // Regex for admin commands
   adminCmdRegGrpChat: /^\/reggrpchat$/i,
+  adminUpdateGrpMsg: /^\/updategrpmsg$/,
+  adminForceCovidUpdate: /^\/forcecovidupdate$/,
+  adminRunDiagnostics: /\/rundiagnostics (.+)/,
   // Regex for matching values in callback queries
-  cbqType: /(?<=<cbq_type>)(.*)(?=<\/cbq_type>)/g,
-  cbqValue: /(?<=<value>)(.*)(?=<\/value>)/g,
+  cbqType: /(?<=\[t\])(.*)(?=\[\/t\])/g,
+  cbqValue: /(?<=\[v\])(.*)(?=\[\/v\])/g,
+  cbqGrpChatId: /(?<=\[gcid\])(.*)(?=\[\/gcid\])/g,
   // Regex for the spam filter
   spamFilter: new RegExp([
     '/',
