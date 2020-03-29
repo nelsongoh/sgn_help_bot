@@ -1,4 +1,30 @@
 module.exports = {
+  getRegionChatIds: (regionName) => {
+    let Firestore = require('@google-cloud/firestore');
+    let db = new Firestore();
+
+    let grpChatsRef = db.collection('grpChats');
+    let query = grpChatsRef.where('region', '==', regionName);
+
+    return query.get()
+      .then((snapshot) => {
+        if (snapshot.empty) {
+          return null;
+        }
+
+        let chatIds = [];
+
+        snapshot.forEach((doc) => {
+          chatIds.push(doc.id);
+        });
+
+        return chatIds;
+      })
+      .catch((err) => {
+        throw err;
+      })
+  },
+
   getBroadcastInfo: (regionName) => {
     let Firestore = require('@google-cloud/firestore');
     let db = new Firestore();
