@@ -25,7 +25,7 @@ app.listen(process.env.PORT, () => {
   console.log("Express server listening at port: " + process.env.PORT);
 });
 
-// Listening for the cron job request to update the COVID cases for Australia
+// Listening for the CRON JOB request to update the COVID cases for Australia
 app.get("/covid-19/au/fetch", (req, res) => {
   DataPull.getCovidUpdatesAu().then((isUpdateSuccessful) => {
     if (isUpdateSuccessful) {
@@ -33,7 +33,7 @@ app.get("/covid-19/au/fetch", (req, res) => {
     }
     else {
       uncleLeeBot.sendMessage(
-        22595307,
+        process.env.DOHPAHMINE,
         "Hello ah boy!\n\n" +
 
         "The datetime now is: " + Utils.getDateTimeNowSydney() + "\n" +
@@ -44,23 +44,73 @@ app.get("/covid-19/au/fetch", (req, res) => {
   });
 });
 
-// // Listening for the cron job request to push updates to the group chats
-// app.get("/grpchat/updates/au-nz", (req, res) => {
-//   // Retrieve the group chat message
-//   // Some promise here, if we enter the catch, then we send a message to me to notify me of the error
-//   // Else if all goes well, broadcast the message
-// })
+// Listening for the CRON JOB request to push updates to the group chats
+app.get("/grpchat/updates/au-nz", (req, res) => {
+  // Retrieve an object, where each key-value pair is a grpChatId mapped to a grpChatMsg
+  groupAdmin.getBroadcastInfo(Types.SG).then((chatIdToMsgObj) => {
+    for (let chatId in chatIdToMsgObj) {
+      uncleLeeBot.sendMessage(
+        Number(chatId),
+        chatIdToMsgObj[chatId]
+      )
+      .then(() => {
+        res.sendStatus(200);
+      })
+      .catch((err) => {
+        uncleLeeBot.sendMessage(
+          process.env.DOHPAHMINE,
+          "Hello ah boy!\n\n" +
+  
+          "The datetime now is: " + Utils.getDateTimeNowSydney() + "\n" +
+          "There was an issue sending a message to chat ID: " + chatId
+        );
+        res.sendStatus(500);
+      })
+    }
+  })
+  .catch((err) => {
+    uncleLeeBot.sendMessage(
+      process.env.DOHPAHMINE,
+      "Uh oh ah boy, there was an issue with the cron job for broadcasting information to the AU / NZ channels!"
+    )
+    res.sendStatus(500);
+  })
+});
 
-// // On START
-// uncleLeeBot.onText(regex.cmdStart, (msg) => {
-//   uncleLeeBot.sendMessage(
-//     msg.from.id,
-//     Messages.HELP_MSG,
-//     {
-//       'reply_to_message_id': msg.message_id,
-//     },
-//   );
-// });
+// Listening for the CRON JOB request to announce COVID-19 cases
+app.get("/covid-19/au/announce", (req, res) => {
+  // Retrieve the latest COVID-19 cases
+  covidCases.getCovidCasesAU().then((caseInfo) => {
+    // Then we retrieve the group chats who are in the AU / NZ region
+    groupAdmin.getRegionChatIds(Types.AU_NZ).then((chatIdList) => {
+      // For each chat ID in the list
+      for (let chatId in chatIdList) {
+        // We announce it to the chat
+        uncleLeeBot.sendMessage(
+          Number(chatId),
+          caseInfo
+        );
+      }
+      res.sendStatus(200);
+    });
+  })
+  .catch((err) => {
+    res.sendStatus(500);
+  })
+});
+
+// On START
+uncleLeeBot.onText(regex.cmdStart, (msg) => {
+  if (msg.chat.id === msg.from.id) {
+    uncleLeeBot.sendMessage(
+      msg.from.id,
+      Messages.HELP_MSG,
+      {
+        'reply_to_message_id': msg.message_id,
+      },
+    );
+  }
+});
 
 // // The HELP command
 // uncleLeeBot.onText(regex.cmdHelp, (msg) => {
@@ -155,7 +205,7 @@ uncleLeeBot.onText(regex.spamFilter, (msg) => {
     // If there is an issue with kicking the user, notify me
     if (isSuccess) {
       uncleLeeBot.sendMessage(
-        22595307,
+        process.env.DOHPAHMINE,
         "Ah boy, I've made a kick from a group chat, here's the details:\n\n" +
         "Group chat title: " + msg.chat.title + "\n" +
         "Kicked user: " + msg.from.first_name + " " + msg.from.last_name + "\n" +
@@ -171,7 +221,7 @@ uncleLeeBot.onText(regex.spamFilter, (msg) => {
   // If there's an issue with kicking the user, notify me
   .catch((err) => {
     uncleLeeBot.sendMessage(
-      22595307,
+      process.env.DOHPAHMINE,
       "Ah boy ah, there was a problem trying to kick the spammer out. Here's the details:\n\n" +
       "Group chat title: " + msg.chat.title + "\n" +
       "User attempted to kick: " + msg.from.first_name + " " + msg.from.last_name + 
@@ -188,7 +238,7 @@ uncleLeeBot.onText(regex.spamFilter, (msg) => {
 // To add a group chat to the datastore
 uncleLeeBot.onText(regex.adminCmdRegGrpChat, (msg) => {
   // Check to make sure if it's me
-  if (msg.from.id === 22595307) {
+  if (msg.from.id === process.env.DOHPAHMINE) {
     // Create an entry in the datastore for the group chat, without the region first
     groupAdmin.regGrpChat(msg.chat.id, msg.chat.title).then((isSuccess) => {
       if (isSuccess) {
@@ -197,7 +247,7 @@ uncleLeeBot.onText(regex.adminCmdRegGrpChat, (msg) => {
       
         // Ask which region to add this chat to
         uncleLeeBot.sendMessage(
-          22595307,
+          process.env.DOHPAHMINE,
           "Ah boy ah, which region do you want this group chat classified as?",
           {
             'reply_markup': Utils.createInlineKeyboard(keyboardData)
@@ -284,7 +334,7 @@ uncleLeeBot.on('callback_query', (cbq) => {
                     // If there's an issue, notify me
                     if (!isSuccess) {
                       uncleLeeBot.sendMessage(
-                        22595307,
+                        process.env.DOHPAHMINE,
                         "There was an issue with resetting the group chat ID whose message needed to be changed."
                       )
                     }
@@ -311,7 +361,7 @@ uncleLeeBot.on('callback_query', (cbq) => {
                   })
                   .catch((err) => {
                     uncleLeeBot.sendMessage(
-                      22595307,
+                      process.env.DOHPAHMINE,
                       err
                     )
                   })
@@ -390,7 +440,7 @@ uncleLeeBot.onText(regex.adminUpdateGrpMsg, (msg) => {
 
 // The FORCE COVID UPDATE command
 uncleLeeBot.onText(regex.adminForceCovidUpdate, (msg) => {
-  if (msg.from.id === 22595307) {
+  if (msg.from.id === process.env.DOHPAHMINE) {
     // Trigger the pull to update the COVID cases into Firestore
     DataPull.getCovidUpdatesAu().then((isUpdateSuccessful) => {
       let covidUpdateSuccessMsg = "";
@@ -401,7 +451,7 @@ uncleLeeBot.onText(regex.adminForceCovidUpdate, (msg) => {
         covidUpdateSuccessMsg = "There was an issue updating the COVID cases for Australia"
       }
       uncleLeeBot.sendMessage(
-        22595307,
+        process.env.DOHPAHMINE,
         "Hello ah boy!\n\n" +
 
         "The time now is: " + Utils.getDateTimeNowSydney() + "\n" +
@@ -413,9 +463,9 @@ uncleLeeBot.onText(regex.adminForceCovidUpdate, (msg) => {
 
 // The DIAGNOSTICS command
 uncleLeeBot.onText(regex.adminRunDiagnostics, (msg, match) => {
-  if (msg.from.id === 22595307) {
+  if (msg.from.id === process.env.DOHPAHMINE) {
     uncleLeeBot.sendMessage(
-      22595307,
+      process.env.DOHPAHMINE,
       "Hello ah boy!\n\n" +
 
       "The time now is: " + Utils.getDateTimeNowSydney() + "\n" +
@@ -429,7 +479,7 @@ uncleLeeBot.onText(regex.adminRunDiagnostics, (msg, match) => {
 // The ID ME command
 uncleLeeBot.onText(regex.cmdIdMe, (msg) => {
   uncleLeeBot.sendMessage(
-    22595307,
+    process.env.DOHPAHMINE,
     "Hello ah boy! Someone has tried getting themselves ID-ed:\n\n" +
   
     "The chat ID they pinged from is: " + msg.chat.id + "\n" +
