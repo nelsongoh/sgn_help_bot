@@ -6,5 +6,13 @@ module.exports = {
   cmdFltStatus: /^\/fltstatus$/i,
   cmdChats: /^\/chats$/i,
   cmdGetCases: /^\/getcases$/i,
-  spamFilter: /((?=.*👇)(?=.*bitcoin)(?=.*http))|((?=.*👇)(?=.*crypto)(?=.*http))/,
+  adminCmdRegGrpChat: /^\/reggrpchat$/i,
+  spamFilter: new RegExp([
+    '/',
+    '((?=(.|\n)*👇)(?=(.|\n)*bitcoin)(?=(.|\n)*http))', '|',
+    '((?=(.|\n)*👇)(?=(.|\n)*crypto)(?=(.|\n)*http))', '|',
+    '((?=(.|\n)*👇)(?=(.|\n)*invest)(?=(.|\n)*http))', '|',
+    '((?=(.|\n)*invest)(?=(.|\n)*profit)(?=(.|\n)*http))',
+    '/i'
+  ].join('')),
 };
