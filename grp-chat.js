@@ -1,4 +1,38 @@
 module.exports = {
+  updateGrpChatRegion: (chatId, chatRegion) => {
+    let Firestore = require('@google-cloud/firestore');
+    let db = new Firestore();
+
+    let grpChatsRef = db.collection('grpChats').doc(chatId.toString());
+    return grpChatsRef.set({
+      'region': chatRegion,
+    }, { merge: true})
+    .then(() => {
+      return true;  // Return true if success
+    })
+    .catch(() => {
+      return false; // Else if there's an error, return false
+    })
+  },
+
+  regGrpChat: (chatId, chatTitle) => {
+    let Firestore = require('@google-cloud/firestore');
+    let db = new Firestore();
+
+    let grpChatsRef = db.collection('grpChats').doc(chatId.toString());
+    return grpChatsRef.set({
+      'grpChatMsg': "NIL",
+      'grpChatTitle': chatTitle,
+      'region': "NIL"
+    })
+    .then(() => {
+      return true;  // Return true if success
+    })
+    .catch(() => {
+      return false; // Else if there's an error, return false
+    })
+  },
+
   getGrpChatMsg: (regionName) => {
     this.getGroupChatIdViaRegion(regionName)
       .then((chatId) => {
@@ -77,7 +111,7 @@ module.exports = {
       });
   },
 
-  updateChatIdRef: (userId, chatIdToChg) => {
+  updateGrpChatIdRef: (userId, chatIdToChg) => {
     let Firestore = require('@google-cloud/firestore');
     let db = new Firestore();
 
@@ -105,10 +139,7 @@ module.exports = {
         if (!doc.exists) {
           return null;
         }
-
-        let dataObj = doc.data()['regionToChatId'];
-
-        return dataObj;
+        return doc.data()['regionToChatId'];
       })
       .catch((err) => {
         console.log(err);
