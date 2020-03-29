@@ -1,12 +1,12 @@
 cron:
 - description: "COVID-19 cases update (Australia)"
   url: /covid-19/au/fetch
-  schedule: every 3 hours synchronized
+  schedule: every 3 hours from 09:00 to 21:00
   timezone: Australia/Sydney
 
 - description: "Australia COVID-19 Case Breakdown Announcement"
   url: /covid-19/au/announce
-  schedule: every 3 hours from 09:00 to 21:00
+  schedule: every 3 hours from 09:05 to 21:05
   timezone: Australia/Sydney
 
 # - description: "Australia Group Chats Broadcast"
