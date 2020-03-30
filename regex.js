@@ -20,8 +20,8 @@ module.exports = {
   // Regex for the spam filter
   spamFilter: new RegExp([
     '/',
-    '((?=(.|\n)*👇)(?=(.|\n)*bitcoin)(?=(.|\n)*http))', '|',
-    '((?=(.|\n)*👇)(?=(.|\n)*crypto)(?=(.|\n)*http))', '|',
+    '((?=(.|\n)*trad)(?=(.|\n)*bit( ?)coin)(?=(.|\n)*http))', '|',
+    '((?=(.|\n)*trad)(?=(.|\n)*crypto)(?=(.|\n)*http))', '|',
     '((?=(.|\n)*👇)(?=(.|\n)*invest)(?=(.|\n)*http))', '|',
     '((?=(.|\n)*invest)(?=(.|\n)*profit)(?=(.|\n)*http))', '|',
     '(?=(.|\n)*AAAAAFY3TYmivxjQejlZPA)', '|',
@@ -33,6 +33,8 @@ module.exports = {
     '((?=(.|\n)*thank)(?=(.|\n)*earn)(?=(.|\n)*http))', '|',
     '((?=(.|\n)*cap)(?=(.|\n)*\$)(?=(.|\n)*http))', '|',
     '((?=(.|\n)*trad)(?=(.|\n)*pay)(?=(.|\n)*http))', '|',
+    '((?=(.|\n)*income)(?=(.|\n)*http))', '|',
+    '((?=(.|\n)*earn)(?=(.|\n)*trad)(?=(.|\n)*http))', // LAST ENTRY CANNOT HAVE A PIPE OPERATOR
     '/i'
   ].join('')),
 };
