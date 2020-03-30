@@ -23,8 +23,11 @@ module.exports = {
   "Do you need to bring your pet back to Singapore?\n" +
   "https://form.gov.sg/#!/5e7c41462afd810011df718b\n\n"+
 
+  "Looking for a hotel to serve your Stay-Home Notice? Here are a list of hotels with special rates negotiated by SGN:\n" +
+  "http://go.gov.sg/sgn-shnaccom\n\n" +
+
   "[ IMPORTANT ]: Things to take note for Singaporeans returning home:\n" +
-  "NOTE: Short-term visitors are no longer allowed to enter / transit, and only work" +
+  "NOTE: Short-term visitors are no longer allowed to enter / transit, and only work-pass holders for essential services may enter the country" +
   "https://go.gov.sg/weareinthistgt\n\n" +
 
   "[ IMPORTANT ]: An official checklist for returning to Singapore\n" +
