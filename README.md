@@ -14,10 +14,10 @@ This bot was created with simple Javascript, using a wrapper library (node-teleg
 This bot also utilizes Google Cloud Firestore as a NoSQL database to read and write information about group chats in it.
 
 ## What are the features come with the bot?
-[x] Self-help "/command" for people to look up links to various resources
-[x] Automated data fetching and parsing from an Australian government site for updated COVID-19 cases
-[x] "Pull" feature to manually update the data for Australian COVID-19 cases
-[x] Automated announcements at fixed frequencies regarding COVID-19 cases in Australia for selected group chats
-[x] Keyword-based spam filter and automatic member removal for unsolicited marketing scams / messages
-[x] Group chat registration via an admin-based "/command" into the datastore
-[x] Group chat message updates via an admin-based "/command" for automatic bot announcements
+- [x] Self-help "/command" for people to look up links to various resources
+- [x] Automated data fetching and parsing from an Australian government site for updated COVID-19 cases
+- [x] "Pull" feature to manually update the data for Australian COVID-19 cases
+- [x] Automated announcements at fixed frequencies regarding COVID-19 cases in Australia for selected group chats
+- [x] Keyword-based spam filter and automatic member removal for unsolicited marketing scams / messages
+- [x] Group chat registration via an admin-based "/command" into the datastore
+- [x] Group chat message updates via an admin-based "/command" for automatic bot announcements
