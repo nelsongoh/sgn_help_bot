@@ -1,5 +1,10 @@
-const express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
+const Promise = require('bluebird');
+Promise.config({
+  cancellation: true
+});
+
+const express = require('express');
 const bodyParser = require('body-parser');
 const Utils = require('./utils');
 const Messages = require('./messages');
