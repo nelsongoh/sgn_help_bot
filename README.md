@@ -9,7 +9,7 @@ The SGN (https://www.singaporeglobalnetwork.com/) is a Singapore government orga
 
 This bot was hacked together as quickly as I could have (which explains the horrible project structure), based on whatever time I had to help support the SGN Telegram group chats, by providing readily-available information in the form of quick links, to thousands of Singaporean group chat members.
 
-Look here to see what [concepts I've learnt](https://github.com/nelsongoh/sgn_help_bot/blob/master/LESSONS.md) from this development experience! 
+Look here to see what [concepts I've learnt](https://github.com/nelsongoh/sgn_help_bot/blob/master/LESSONS.md) from this development experience!
 
 ## What is this bot made with? Where is it hosted?
 This bot was created with simple Javascript, using a wrapper library (node-telegram-bot-api) and hosted on Google Cloud.
@@ -23,3 +23,5 @@ This bot also utilizes Google Cloud Firestore as a NoSQL database to read and wr
 - [x] Keyword-based spam filter and automatic member removal for unsolicited marketing scams / messages
 - [x] Group chat registration via an admin-based "/command" into the datastore
 - [x] Group chat message updates via an admin-based "/command" for automatic bot announcements
+- [] Automated message forwarding from official channels to group chats
+- [] Automated data fetching and parsing from the Singapore government site for updated COVID-19 cases
