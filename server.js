@@ -38,7 +38,7 @@ app.get("/covid-19/au/fetch", (req, res) => {
     }
     else {
       uncleLeeBot.sendMessage(
-        process.env.DOHPAHMINE,
+        Number(process.env.DOHPAHMINE),
         "Hello ah boy!\n\n" +
 
         "The datetime now is: " + Utils.getDateTimeNowSydney() + "\n" +
@@ -63,7 +63,7 @@ app.get("/grpchat/updates/au-nz", (req, res) => {
       })
       .catch((err) => {
         uncleLeeBot.sendMessage(
-          process.env.DOHPAHMINE,
+          Number(process.env.DOHPAHMINE),
           "Hello ah boy!\n\n" +
   
           "The datetime now is: " + Utils.getDateTimeNowSydney() + "\n" +
@@ -75,7 +75,7 @@ app.get("/grpchat/updates/au-nz", (req, res) => {
   })
   .catch((err) => {
     uncleLeeBot.sendMessage(
-      process.env.DOHPAHMINE,
+      Number(process.env.DOHPAHMINE),
       "Uh oh ah boy, there was an issue with the cron job for broadcasting information to the AU / NZ channels!"
     )
     res.sendStatus(500);
@@ -122,90 +122,101 @@ uncleLeeBot.onText(regex.cmdStart, (msg) => {
   }
 });
 
-// // The HELP command
-// uncleLeeBot.onText(regex.cmdHelp, (msg) => {
-//   uncleLeeBot.sendMessage(
-//     msg.chat.id,
-//     Messages.HELP_MSG + Messages.PVT_MSG_OPT,
-//     {
-//       'reply_to_message_id': msg.message_id,
-//     },
-//   );
-// });
+// The HELP command
+uncleLeeBot.onText(regex.cmdHelp, (msg) => {
+  uncleLeeBot.sendMessage(
+    msg.chat.id,
+    Messages.HELP_MSG + Messages.PVT_MSG_OPT,
+    {
+      'reply_to_message_id': msg.message_id,
+    },
+  );
+});
 
-// // The INFO command
-// uncleLeeBot.onText(regex.cmdInfo, (msg) => {
-//   uncleLeeBot.sendMessage(
-//     msg.chat.id,
-//     Messages.INFO_MSG + Messages.PVT_MSG_OPT,
-//     {
-//       'reply_to_message_id': msg.message_id,
-//     },
-//   );
-// });
+// The INFO command
+uncleLeeBot.onText(regex.cmdInfo, (msg) => {
+  uncleLeeBot.sendMessage(
+    msg.chat.id,
+    Messages.INFO_MSG + Messages.PVT_MSG_OPT,
+    {
+      'reply_to_message_id': msg.message_id
+    },
+  );
+});
 
-// // The GOING HOME command
-// uncleLeeBot.onText(regex.cmdGoingHome, (msg) => {
-//   uncleLeeBot.sendMessage(
-//     msg.chat.id,
-//     Messages.GOING_HOME_MSG,
-//     {
-//       'reply_to_message_id': msg.message_id,
-//     },
-//   );
-// });
+// The GOING HOME command
+uncleLeeBot.onText(regex.cmdGoingHome, (msg) => {
+  uncleLeeBot.sendMessage(
+    msg.chat.id,
+    Messages.GOING_HOME_MSG,
+    {
+      'reply_to_message_id': msg.message_id,
+    },
+  );
+});
 
-// // The FLIGHT STATUSES command
-// uncleLeeBot.onText(regex.cmdFltStatus, (msg) => {
-//   uncleLeeBot.sendMessage(
-//     msg.chat.id,
-//     Messages.FLT_STATUS_MSG,
-//     {
-//       'reply_to_message_id': msg.message_id,
-//     },
-//   );
-// });
+// The FLIGHT STATUSES command
+uncleLeeBot.onText(regex.cmdFltStatus, (msg) => {
+  uncleLeeBot.sendMessage(
+    msg.chat.id,
+    Messages.FLT_STATUS_MSG,
+    {
+      'reply_to_message_id': msg.message_id,
+    },
+  );
+});
 
-// // The CHATS command
-// uncleLeeBot.onText(regex.cmdChats, (msg) => {
-//   uncleLeeBot.sendMessage(
-//     msg.chat.id,
-//     Messages.CHAT_GRPS_MSG + Messages.PVT_MSG_OPT,
-//     {
-//       'reply_to_message_id': msg.message_id,
-//     },
-//   );
-// });
+// The CHATS command
+uncleLeeBot.onText(regex.cmdChats, (msg) => {
+  uncleLeeBot.sendMessage(
+    msg.chat.id,
+    Messages.CHAT_GRPS_MSG + Messages.PVT_MSG_OPT,
+    {
+      'reply_to_message_id': msg.message_id,
+    },
+  );
+});
 
-// // The GET (COVID) CASES command
-// uncleLeeBot.onText(regex.cmdGetCases, (msg) => {
-//   // We need to invoke the Promise-based method to get the values from Firestore
-//   covidCases.getCovidCasesAU().then((casesUpdate) => {
-//     // Once we have it, we send it to the user's private chat
-//     uncleLeeBot.sendMessage(
-//       msg.from.id,
-//       casesUpdate
-//     )
-//     .then(() => {
-//       if (msg.chat.id !== msg.from.id) {
-//         uncleLeeBot.sendMessage(
-//           msg.chat.id,
-//           "Hey " + msg.from.first_name +
-//           ", I've just sent you the details in our private chat!"
-//         )
-//       }
-//     })
-//     .catch((error) => {
-//       uncleLeeBot.sendMessage(
-//         msg.chat.id,
-//         "Hey " + msg.from.first_name + 
-//         ", I can only provide the details if you tap here: @sgn_help_bot and type /getcases to me directly.",
-//         {
-//           'reply_to_message_id': msg.message_id,
-//         }
-//       )
-//     });
-//   })
+// The GET (COVID) CASES command
+uncleLeeBot.onText(regex.cmdGetCases, (msg) => {
+  // We need to invoke the Promise-based method to get the values from Firestore
+  covidCases.getCovidCasesAU().then((casesUpdate) => {
+    // Once we have it, we send it to the user's private chat
+    uncleLeeBot.sendMessage(
+      msg.from.id,
+      casesUpdate
+    )
+    .then(() => {
+      if (msg.chat.id !== msg.from.id) {
+        uncleLeeBot.sendMessage(
+          msg.chat.id,
+          "Hey " + msg.from.first_name +
+          ", I've just sent you the details in our private chat!"
+        )
+      }
+    })
+    .catch((error) => {
+      uncleLeeBot.sendMessage(
+        msg.chat.id,
+        "Hey " + msg.from.first_name + 
+        ", I can only provide the details if you tap here: @sgn_help_bot and type /getcases to me directly.",
+        {
+          'reply_to_message_id': msg.message_id,
+        }
+      )
+    });
+  })
+});
+
+// // The listener for official SGN channel announcements
+// uncleLeeBot.onText(regex.listenSgnChannel, (msg) => {
+//   let chatType = msg.chat.type;
+//   let chatInviteLink = msg.chat.invite_link;
+//   // If this message came from the official SGN channel
+//   if ((chatType === Types.TELEGRAM_GRP_CHAT_CHN) && (chatInviteLink === Types.OFFICIAL_SGN_CHN_TITLE)) {
+//     // We broadcast this to every SGN channel
+
+//   }
 // });
 
 // The listener for potential spam messages from user
@@ -215,7 +226,7 @@ uncleLeeBot.onText(regex.spamFilter, (msg) => {
     // If there is an issue with kicking the user, notify me
     if (isSuccess) {
       uncleLeeBot.sendMessage(
-        process.env.DOHPAHMINE,
+        Number(process.env.DOHPAHMINE),
         "Ah boy, I've made a kick from a group chat, here's the details:\n\n" +
         "Group chat title: " + msg.chat.title + "\n" +
         "Kicked user: " + msg.from.first_name + " " + msg.from.last_name + "\n" +
@@ -231,7 +242,7 @@ uncleLeeBot.onText(regex.spamFilter, (msg) => {
   // If there's an issue with kicking the user, notify me
   .catch((err) => {
     uncleLeeBot.sendMessage(
-      process.env.DOHPAHMINE,
+      Number(process.env.DOHPAHMINE),
       "Ah boy ah, there was a problem trying to kick the spammer out. Here's the details:\n\n" +
       "Group chat title: " + msg.chat.title + "\n" +
       "User attempted to kick: " + msg.from.first_name + " " + msg.from.last_name + 
@@ -248,7 +259,7 @@ uncleLeeBot.onText(regex.spamFilter, (msg) => {
 // To add a group chat to the datastore
 uncleLeeBot.onText(regex.adminCmdRegGrpChat, (msg) => {
   // Check to make sure if it's me
-  if (msg.from.id === process.env.DOHPAHMINE) {
+  if (msg.from.id === Number(process.env.DOHPAHMINE)) {
     // Create an entry in the datastore for the group chat, without the region first
     groupAdmin.regGrpChat(msg.chat.id, msg.chat.title).then((isSuccess) => {
       if (isSuccess) {
@@ -257,7 +268,7 @@ uncleLeeBot.onText(regex.adminCmdRegGrpChat, (msg) => {
       
         // Ask which region to add this chat to
         uncleLeeBot.sendMessage(
-          process.env.DOHPAHMINE,
+          Number(process.env.DOHPAHMINE),
           "Ah boy ah, which region do you want this group chat classified as?",
           {
             'reply_markup': Utils.createInlineKeyboard(keyboardData)
@@ -344,7 +355,7 @@ uncleLeeBot.on('callback_query', (cbq) => {
                     // If there's an issue, notify me
                     if (!isSuccess) {
                       uncleLeeBot.sendMessage(
-                        process.env.DOHPAHMINE,
+                        Number(process.env.DOHPAHMINE),
                         "There was an issue with resetting the group chat ID whose message needed to be changed."
                       )
                     }
@@ -371,7 +382,7 @@ uncleLeeBot.on('callback_query', (cbq) => {
                   })
                   .catch((err) => {
                     uncleLeeBot.sendMessage(
-                      process.env.DOHPAHMINE,
+                      Number(process.env.DOHPAHMINE),
                       err
                     )
                   })
@@ -450,7 +461,7 @@ uncleLeeBot.onText(regex.adminUpdateGrpMsg, (msg) => {
 
 // The FORCE COVID UPDATE command
 uncleLeeBot.onText(regex.adminForceCovidUpdate, (msg) => {
-  if (msg.from.id === process.env.DOHPAHMINE) {
+  if (msg.from.id === Number(process.env.DOHPAHMINE)) {
     // Trigger the pull to update the COVID cases into Firestore
     DataPull.getCovidUpdatesAu().then((isUpdateSuccessful) => {
       let covidUpdateSuccessMsg = "";
@@ -461,7 +472,7 @@ uncleLeeBot.onText(regex.adminForceCovidUpdate, (msg) => {
         covidUpdateSuccessMsg = "There was an issue updating the COVID cases for Australia"
       }
       uncleLeeBot.sendMessage(
-        process.env.DOHPAHMINE,
+        Number(process.env.DOHPAHMINE),
         "Hello ah boy!\n\n" +
 
         "The time now is: " + Utils.getDateTimeNowSydney() + "\n" +
@@ -473,9 +484,9 @@ uncleLeeBot.onText(regex.adminForceCovidUpdate, (msg) => {
 
 // The DIAGNOSTICS command
 uncleLeeBot.onText(regex.adminRunDiagnostics, (msg, match) => {
-  if (msg.from.id === process.env.DOHPAHMINE) {
+  if (msg.from.id === Number(process.env.DOHPAHMINE)) {
     uncleLeeBot.sendMessage(
-      process.env.DOHPAHMINE,
+      Number(process.env.DOHPAHMINE),
       "Hello ah boy!\n\n" +
 
       "The time now is: " + Utils.getDateTimeNowSydney() + "\n" +
@@ -489,7 +500,7 @@ uncleLeeBot.onText(regex.adminRunDiagnostics, (msg, match) => {
 // The ID ME command
 uncleLeeBot.onText(regex.cmdIdMe, (msg) => {
   uncleLeeBot.sendMessage(
-    process.env.DOHPAHMINE,
+    Number(process.env.DOHPAHMINE),
     "Hello ah boy! Someone has tried getting themselves ID-ed:\n\n" +
   
     "The chat ID they pinged from is: " + msg.chat.id + "\n" +
