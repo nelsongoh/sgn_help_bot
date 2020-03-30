@@ -22,8 +22,7 @@ module.exports = {
     '/',
     '((?=(.|\n)*trad)(?=(.|\n)*bit( ?)coin)(?=(.|\n)*http))', '|',
     '((?=(.|\n)*trad)(?=(.|\n)*crypto)(?=(.|\n)*http))', '|',
-    '((?=(.|\n)*👇)(?=(.|\n)*invest)(?=(.|\n)*http))', '|',
-    '((?=(.|\n)*invest)(?=(.|\n)*profit)(?=(.|\n)*http))', '|',
+    '((?=(.|\n)*invest)(?=(.|\n)*http))', '|',
     '(?=(.|\n)*AAAAAFY3TYmivxjQejlZPA)', '|',
     '(?=(.|\n)*AAAAAFDE45as4-4bvyhcYg)',
     '(?=(.|\n)*AAAAAFXxeszLtcGrtm77zQ)',
@@ -34,7 +33,14 @@ module.exports = {
     '((?=(.|\n)*cap)(?=(.|\n)*\$)(?=(.|\n)*http))', '|',
     '((?=(.|\n)*trad)(?=(.|\n)*pay)(?=(.|\n)*http))', '|',
     '((?=(.|\n)*income)(?=(.|\n)*http))', '|',
-    '((?=(.|\n)*earn)(?=(.|\n)*trad)(?=(.|\n)*http))', // LAST ENTRY CANNOT HAVE A PIPE OPERATOR
+    '((?=(.|\n)*earn)(?=(.|\n)*trad)(?=(.|\n)*http))', '|',
+    '((?=(.|\n)*loan)(?=(.|\n)*credit))', '|',
+    '((?=(.|\n)*trad)(?=(.|\n)*profit)(?=(.|\n)*http))', '|',
+    '((?=(.|\n)*cash)(?=(.|\n)*profit)(?=(.|\n)*http))', '|',
+    '((?=(.|\n)*cash)(?=(.|\n)*trad)(?=(.|\n)*http))', '|',
+    '((?=(.|\n)*loan)(?=(.|\n)*cash)(?=(.|\n)*http))', '|',
+    '((?=(.|\n)*profit)(?=(.|\n)*bit( ?)coin)(?=(.|\n)*http))', '|',
+    '((?=(.|\n)*profit)(?=(.|\n)*crypto)(?=(.|\n)*http))', // LAST ENTRY CANNOT HAVE A PIPE OPERATOR
     '/i'
   ].join('')),
 };
