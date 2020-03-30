@@ -1,4 +1,30 @@
 module.exports = {
+  getAllSgnChats: () => {
+    let Firestore = require('@google-cloud/firestore');
+    let db = new Firestore();
+
+    let grpChatsRef = db.collection('grpChats');
+    let query = grpChatsRef.where('isSgn', '==', true);
+
+    return query.get()
+      .then((snapshot) => {
+        if (snapshot.empty) {
+          return null;
+        }
+
+        let grpChatIds = [];
+
+        snapshot.forEach((doc) => {
+          grpChatIds.push(doc.id);
+        });
+
+        return grpChatIds;
+      })
+      .catch((err) => {
+        throw err;
+      })
+  },
+
   getRegionChatIds: (regionName) => {
     let Firestore = require('@google-cloud/firestore');
     let db = new Firestore();
@@ -73,6 +99,7 @@ module.exports = {
 
     let grpChatsRef = db.collection('grpChats').doc(chatId.toString());
     return grpChatsRef.set({
+      'isSgn': true,
       'grpChatMsg': "NIL",
       'grpChatTitle': chatTitle,
       'region': "NIL"
