@@ -4,18 +4,21 @@ module.exports = {
 
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-  HELP_MSG: "Here are some possible commands to help you get started:\n\n" +
-  "/info - A list of go-to resources regarding the COVID-19 situation\n" +
-  "/goinghome - A list of links to resources to help you with getting back home\n" +
-  // "/stayinghere - A list of links to help you \n" +
-  "/chats - This will show you a list of available local chat groups for the Singaporean community in Australia\n" +
-  "/getcases - This shows the current number of COVID-19 cases in and around Australia",
+  HELP_MSG: "Here are some possible [ commands ] to help you get started:\n\n" +
+
+  "For example, just type the word: info (without the square brackets)\n\n" +
+
+  "[ info ] - A list of go-to resources regarding the COVID-19 situation\n\n" +
+  "[ gohome ] - A list of links to resources to help you with getting back home\n\n" +
+  // "[ stayhere ] - A list of links to help you\n\n" +
+  "[ chats ] - This will show you a list of available local chat groups for the Singaporean community in Australia\n\n" +
+  "[ getcases ] - This shows the current number of COVID-19 cases in and around Australia",
 
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-  GOING_HOME_MSG: "Here are some links and commands to help you if you're going home:\n\n" +
+  GOING_HOME_MSG: "Here are some links and [ commands ] to help you if you're going home:\n\n" +
 
-  "/fltstatus - Links to flight statuses for Singapore Airlines, and Scoot\n\n" +
+  "[ flts ] - Links to flight statuses for Singapore Airlines, and Scoot\n\n" +
 
   "Need help shipping stuff back to Singapore?:\n" +
   "https://docs.google.com/document/d/1-Xqqq10IyFnf4f94Kt4x9a-RP-YsKhYTEByIasoeSDI/edit#bookmark=id.q91e4ticxq3r\n\n" +
@@ -26,14 +29,14 @@ module.exports = {
   "Looking for a hotel to serve your Stay-Home Notice? Here are a list of hotels with special rates negotiated by SGN:\n" +
   "http://go.gov.sg/sgn-shnaccom\n\n" +
 
-  "[ IMPORTANT ]: Things to take note for Singaporeans returning home:\n" +
+  "!! IMPORTANT !!: Things to take note for Singaporeans returning home:\n" +
   "NOTE: Short-term visitors are no longer allowed to enter / transit, and only work-pass holders for essential services may enter the country" +
   "https://go.gov.sg/weareinthistgt\n\n" +
 
-  "[ IMPORTANT ]: An official checklist for returning to Singapore\n" +
+  "!! IMPORTANT !!: An official checklist for returning to Singapore\n" +
   "http://go.gov.sg/sgn-returningoschecklist\n\n" +
   
-  "[ IMPORTANT ]: Completing your online health declaration PRIOR to entry into Singapore\n" +
+  "!! IMPORTANT !!: Completing your online health declaration PRIOR to entry into Singapore\n" +
   "https://icaeservices.ica.gov.sg/sgarrivalcard/",
 
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -82,4 +85,9 @@ module.exports = {
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
   PROMPT_ADMIN_NEW_MSG: "Please enter the new message you would like for your group chat:",
+
+  /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+  SGN_CHN_ANNOUNCE_MSG: "[ SGN UPDATE ]\n\n" +
+  "An update has been posted on the official SGN channel. Please subscribe here to check it out:\nhttps://t.me/SGNchannel",
 };
