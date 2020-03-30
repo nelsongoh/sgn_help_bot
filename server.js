@@ -208,16 +208,36 @@ uncleLeeBot.onText(regex.cmdGetCases, (msg) => {
   })
 });
 
-// // The listener for official SGN channel announcements
-// uncleLeeBot.onText(regex.listenSgnChannel, (msg) => {
-//   let chatType = msg.chat.type;
-//   let chatInviteLink = msg.chat.invite_link;
-//   // If this message came from the official SGN channel
-//   if ((chatType === Types.TELEGRAM_GRP_CHAT_CHN) && (chatInviteLink === Types.OFFICIAL_SGN_CHN_TITLE)) {
-//     // We broadcast this to every SGN channel
+// The listener for official SGN channel announcements
+uncleLeeBot.on('channel_post', (msg) => {
+  let chatType = msg.chat.type;
+  let chatTitle = msg.chat.title;
 
-//   }
-// });
+  // If this message came from the official SGN channel
+  if ((chatType === Types.TELEGRAM_GRP_CHAT_CHN) && (chatTitle === Types.OFFICIAL_SGN_CHN_TITLE)) {
+    // We broadcast this to every SGN channel
+    groupAdmin.getAllSgnChats().then((grpChatIds) => {
+      if (grpChatIds !== null) {
+        for (let idx in grpChatIds) {
+          uncleLeeBot.sendMessage(
+            Number(grpChatIds[idx]),
+            Messages.SGN_CHN_ANNOUNCE_MSG
+          );
+        }
+      }
+      else {
+        throw "The SGN channel retrieval from the datastore rendered no search results. The array is null."
+      }
+    })
+    // Send me a message if there was an error
+    .catch((err) => {
+      uncleLeeBot.sendMessage(
+        Number(process.env.DOHPAHMINE),
+        "Ah boy ah, there was a problem with retrieving the SGN group chats:\n\n" + err,
+      );
+    });
+  }
+});
 
 // The listener for potential spam messages from user
 uncleLeeBot.onText(regex.spamFilter, (msg) => {
@@ -269,7 +289,7 @@ uncleLeeBot.onText(regex.adminCmdRegGrpChat, (msg) => {
         // Ask which region to add this chat to
         uncleLeeBot.sendMessage(
           Number(process.env.DOHPAHMINE),
-          "Ah boy ah, which region do you want this group chat classified as?",
+          "Ah boy ah, which region do you want this group chat [ " + msg.chat.title + " ] classified as?",
           {
             'reply_markup': Utils.createInlineKeyboard(keyboardData)
           }
