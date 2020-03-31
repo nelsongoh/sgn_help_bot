@@ -2,6 +2,8 @@ module.exports = {
   // Callback query constants
   'UPDATE_GROUP_MESSAGE': '0',
   'REGISTER_GROUP_CHAT': '1',
+  'USER_SELECT_REGION': '2',
+  'REGISTER_GROUP_CHAT_IS_SGN': '3',
 
   // Country / region constants
   'REGION_AU_NZ': 'au_nz', // Australia / New Zealand
