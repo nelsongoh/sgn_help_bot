@@ -30,9 +30,9 @@ app.listen(process.env.PORT, () => {
   console.log("Express server listening at port: " + process.env.PORT);
 });
 
-// Listening for the CRON JOB request to update the COVID cases for Australia
+// Listening for the CRON JOB request to update the COVID-19 cases for Australia
 app.get("/covid-19/au/fetch", (req, res) => {
-  DataPull.getCovidUpdatesAu().then((isUpdateSuccessful) => {
+  DataPull.getCovidUpdatesAU().then((isUpdateSuccessful) => {
     if (isUpdateSuccessful) {
       res.sendStatus(200);
     }
@@ -49,10 +49,29 @@ app.get("/covid-19/au/fetch", (req, res) => {
   });
 });
 
+// Listening for the CRON JOB request to update the COVID-19 cases for Singapore
+app.get("/covid-19/sg/fetch", (req, res) => {
+  DataPull.getCovidUpdatesSG().then((isUpdateSuccessful) => {
+    if (isUpdateSuccessful) {
+      res.sendStatus(200);
+    }
+    else {
+      uncleLeeBot.sendMessage(
+        Number(process.env.DOHPAHMINE),
+        "Hello ah boy!\n\n" +
+
+        "The datetime now is: " + Utils.getDateTimeNowSydney() + "\n" +
+        "There was an issue with the cron job to fetch the data from the Singapore website."
+      );
+      res.sendStatus(500);
+    }
+  });
+});
+
 // Listening for the CRON JOB request to push updates to the group chats
 app.get("/grpchat/updates/au-nz", (req, res) => {
   // Retrieve an object, where each key-value pair is a grpChatId mapped to a grpChatMsg
-  groupAdmin.getBroadcastInfo(Types.SG).then((chatIdToMsgObj) => {
+  groupAdmin.getBroadcastInfo(Types.REGION_AU_NZ).then((chatIdToMsgObj) => {
     for (let chatId in chatIdToMsgObj) {
       uncleLeeBot.sendMessage(
         Number(chatId),
@@ -76,18 +95,45 @@ app.get("/grpchat/updates/au-nz", (req, res) => {
   .catch((err) => {
     uncleLeeBot.sendMessage(
       Number(process.env.DOHPAHMINE),
-      "Uh oh ah boy, there was an issue with the cron job for broadcasting information to the AU / NZ channels!"
+      "Uh oh ah boy, there was an issue with the cron job for broadcasting information to the AU / NZ channels: \n\n" + err 
     )
     res.sendStatus(500);
   })
 });
 
-// Listening for the CRON JOB request to announce COVID-19 cases
+// Listening for the CRON JOB request to announce COVID-19 cases for Australia (Non-SGN group chats)
 app.get("/covid-19/au/announce", (req, res) => {
-  // Retrieve the latest COVID-19 cases
+  // Retrieve the latest COVID-19 cases for AU
   covidCases.getCovidCasesAU().then((caseInfo) => {
     // Then we retrieve the group chats who are in the AU / NZ region
-    groupAdmin.getRegionChatIds(Types.AU_NZ).then((chatIdList) => {
+    groupAdmin.getChatIdsFromNonSgnRegion(Types.REGION_AU_NZ).then((chatIdList) => {
+      if (chatIdList !== null) {
+        // For each chat ID in the list
+        for (let idx in chatIdList) {
+          // We announce it to the chat
+          uncleLeeBot.sendMessage(
+            chatIdList[idx],
+            caseInfo
+          );
+        }
+        res.sendStatus(200);
+      }
+      else {
+        res.sendStatus(500);
+      }
+    });
+  })
+  .catch((err) => {
+    res.sendStatus(500);
+  })
+});
+
+// Listening for the CRON JOB request to announce COVID-19 cases for Singapore (Non-SGN group chats)
+app.get("/covid-19/sg/announce", (req, res) => {
+  // Retrieve the latest COVID-19 cases for AU
+  covidCases.getCovidCasesSG().then((caseInfo) => {
+    // Then we retrieve the group chats who are in the SG region
+    groupAdmin.getChatIdsFromNonSgnRegion(Types.REGION_SG).then((chatIdList) => {
       if (chatIdList !== null) {
         // For each chat ID in the list
         for (let idx in chatIdList) {
@@ -179,33 +225,96 @@ uncleLeeBot.onText(regex.cmdChats, (msg) => {
 
 // The GET (COVID) CASES command
 uncleLeeBot.onText(regex.cmdGetCases, (msg) => {
-  // We need to invoke the Promise-based method to get the values from Firestore
-  covidCases.getCovidCasesAU().then((casesUpdate) => {
-    // Once we have it, we send it to the user's private chat
+  // If this is coming from an individual's get request
+  if (msg.chat.id === msg.from.id) {
+    // Check with them which region's cases they would like to see
     uncleLeeBot.sendMessage(
-      msg.from.id,
-      casesUpdate
+      msg.chat.id,
+      "Which region's COVID-19 cases would you like to see?",
+      {
+        'reply_markup': Utils.createInlineKeyboardMarkup(Utils.generateCovidCaseReg())
+      }
     )
-    .then(() => {
-      if (msg.chat.id !== msg.from.id) {
+  }
+  else {
+    // We need to check which region this chat is from
+    groupAdmin.getRegionFromChatId(msg.chat.id).then((region) => {
+      // If there is no result
+      if (region === null) {
+        // Inform the user that the group chat hasn't been registered yet
         uncleLeeBot.sendMessage(
           msg.chat.id,
-          "Hey " + msg.from.first_name +
-          ", I've just sent you the details in our private chat!"
+          "Sorry, but your group chat hasn't been registered yet!"
         )
       }
-    })
-    .catch((error) => {
-      uncleLeeBot.sendMessage(
-        msg.chat.id,
-        "Hey " + msg.from.first_name + 
-        ", I can only provide the details if you tap here: @sgn_help_bot and type /getcases to me directly.",
-        {
-          'reply_to_message_id': msg.message_id,
+      else {
+        switch(region) {
+          // If this is the AU / NZ region, show cases in that region
+          case Types.REGION_AU_NZ:
+            // We need to invoke the Promise-based method to get the values from Firestore
+            covidCases.getCovidCasesAU().then((casesUpdate) => {
+              // Once we have it, we send a reply to the user
+              uncleLeeBot.sendMessage(
+                msg.chat.id,
+                casesUpdate,
+                {
+                  'reply_to_message_id': msg.message_id,
+                }
+              );
+              // .then(() => {
+              //   if (msg.chat.id !== msg.from.id) {
+              //     uncleLeeBot.sendMessage(
+              //       msg.chat.id,
+              //       "Hey " + msg.from.first_name +
+              //       ", I've just sent you the details in our private chat!"
+              //     )
+              //   }
+              // })
+              // .catch((error) => {
+              //   uncleLeeBot.sendMessage(
+              //     msg.chat.id,
+              //     "Hey " + msg.from.first_name + 
+              //     ", I can only provide the details if you tap here: @sgn_help_bot and type 'getcases' to me directly.",
+              //     {
+              //       'reply_to_message_id': msg.message_id,
+              //     }
+              //   )
+              // });
+            });
+            break;
+
+          case Types.REGION_SG:
+            covidCases.getCovidCasesSG().then((casesUpdate) => {
+              // Once we have it, we send a reply to the user
+              uncleLeeBot.sendMessage(
+                msg.chat.id,
+                casesUpdate,
+                {
+                  'reply_to_message_id': msg.message_id,
+                }
+              );
+            });
+            break;
+
+          default:
+            uncleLeeBot.sendMessage(
+              msg.chat.id,
+              "I'm sorry, but I don't have any information about COVID-19 cases in your region!",
+              {
+                'reply_to_message_id': msg.message_id,
+              }
+            );
+            break;
         }
-      )
-    });
-  })
+      }
+    })
+    .catch((err) => {
+      uncleLeeBot.sendMessage(
+        Number(process.env.DOHPAHMINE),
+        "Ah boy ah, looks like we have a problem with retrieving the group chat region with the group chat ID:\n\n" + err
+      );
+    })
+  }
 });
 
 // The listener for official SGN channel announcements
@@ -291,7 +400,7 @@ uncleLeeBot.onText(regex.adminCmdRegGrpChat, (msg) => {
           Number(process.env.DOHPAHMINE),
           "Ah boy ah, which region do you want this group chat [ " + msg.chat.title + " ] classified as?",
           {
-            'reply_markup': Utils.createInlineKeyboard(keyboardData)
+            'reply_markup': Utils.createInlineKeyboardMarkup(keyboardData)
           }
         );
       }
@@ -425,6 +534,9 @@ uncleLeeBot.on('callback_query', (cbq) => {
           });
       });
     })
+    .catch((err) => {
+      uncleLeeBot.answerCallbackQuery(cbq.id);
+    })
   }
   else if (cbqType === Types.REGISTER_GROUP_CHAT) {
     let grpChatId = Utils.getCallbackGrpChatId(cbq.data);
@@ -445,6 +557,129 @@ uncleLeeBot.on('callback_query', (cbq) => {
         {
           'text': followUpMsg,
         }  
+      );
+
+      // Then we update the previously sent message (to ask them if this is a SGN-based chat)
+      let grpChatIsSgnOpts = Utils.generateRegGrpChatIsSgn(grpChatId);
+      uncleLeeBot.editMessageText(
+        "Is this a SGN-based chat?",
+        {
+          'chat_id': cbq.message.chat.id,
+          'message_id': cbq.message.message_id,
+          'reply_markup': Utils.createInlineKeyboardMarkup(grpChatIsSgnOpts)
+        }
+      );
+    })
+    .catch((err) => {
+      uncleLeeBot.answerCallbackQuery(cbq.id);
+    });
+  }
+  else if (cbqType === Types.USER_SELECT_REGION) {
+    // Answer the callback query! (MANDATORY)
+    uncleLeeBot.answerCallbackQuery(cbq.id);
+    switch (cbqValue) {
+      // If Singapore was selected
+      case Types.REGION_SG:
+        covidCases.getCovidCasesSG().then((casesSG) => {
+          // Send the cases update to the user
+          uncleLeeBot.editMessageText(
+            casesSG,
+            {
+              'chat_id': cbq.message.chat.id,
+              'message_id': cbq.message.message_id,
+              'reply_markup': {
+                'inline_keyboard': [[]]
+              }
+            }
+          );
+        })
+        .catch((err) => {
+          // Else if there was an error, notify them that there was something wrong
+          uncleLeeBot.editMessageText(
+            "I'm sorry, but something went wrong with retrieving the information for the COVID-19 cases!",
+            {
+              'chat_id': cbq.message.chat.id,
+              'message_id': cbq.message.message_id,
+              'reply_markup': {
+                'inline_keyboard': [[]]
+              }
+            }
+          );
+        })
+        break;
+      
+      // If Australia / New Zealand was selected
+      case Types.REGION_AU_NZ:
+        covidCases.getCovidCasesAU().then((casesAU) => {
+          // Send the cases update to the user
+          uncleLeeBot.editMessageText(
+            casesAU,
+            {
+              'chat_id': cbq.message.chat.id,
+              'message_id': cbq.message.message_id,
+              'reply_markup': {
+                'inline_keyboard': [[]]
+              }
+            }
+          );
+        })
+        .catch((err) => {
+          // Else if there was an error, notify them that there was something wrong
+          uncleLeeBot.editMessageText(
+            "I'm sorry, but something went wrong with retrieving the information for the COVID-19 cases!",
+            {
+              'chat_id': cbq.message.chat.id,
+              'message_id': cbq.message.message_id,
+              'reply_markup': {
+                'inline_keyboard': [[]]
+              }
+            }
+          );
+        })
+        break;
+
+      default:
+        uncleLeeBot.editMessageText(
+          "There's something wrong with what the button is sending to the server. Please contact the bot administrator.",
+          {
+            'chat_id': cbq.message.chat.id,
+            'message_id': cbq.message.message_id,
+            'reply_markup': {
+              'inline_keyboard': [[]]
+            }
+          }
+        );
+        break;
+    }
+  }
+  else if (cbqType === Types.REGISTER_GROUP_CHAT_IS_SGN) {
+    // Answer the callback query! (MANDATORY)
+    uncleLeeBot.answerCallbackQuery(cbq.id);
+    let gcid = Utils.getCallbackGrpChatId(cbq.data);
+    let isSgn = false;
+    
+    if (cbqType === 'true') {
+      isSgn = true;
+    }
+
+    // Update the chat's group chat SGN status in the datastore
+    groupAdmin.updateGrpChatIsSgn(gcid, isSgn).then((isSuccess) => {
+      let userOutputMsg = "";
+      if (isSuccess) {
+        userOutputMsg = "The group chat has been successfully registered in the datastore.";
+      }
+      else {
+        userOutputMsg = "There was an error updating the SGN status of the group chat.";
+      }
+      uncleLeeBot.editMessageText(
+        userOutputMsg,
+        {
+          'chat_id': cbq.message.chat.id,
+          'message_id': cbq.message.message_id,
+          'reply_markup': {
+            'inline_keyboard': [[]]
+          }
+        }
       );
     });
   }
@@ -472,7 +707,7 @@ uncleLeeBot.onText(regex.adminUpdateGrpMsg, (msg) => {
         msg.from.id,
         "Please select the group chat for which the message should be updated:",
         {
-          'reply_markup': Utils.createInlineKeyboard(keyboardCallback),
+          'reply_markup': Utils.createInlineKeyboardMarkup(keyboardCallback),
         }
       )
     }
@@ -482,14 +717,32 @@ uncleLeeBot.onText(regex.adminUpdateGrpMsg, (msg) => {
 // The FORCE COVID UPDATE command
 uncleLeeBot.onText(regex.adminForceCovidUpdate, (msg) => {
   if (msg.from.id === Number(process.env.DOHPAHMINE)) {
-    // Trigger the pull to update the COVID cases into Firestore
-    DataPull.getCovidUpdatesAu().then((isUpdateSuccessful) => {
+    // Trigger the pull to update the COVID cases into Firestore for Australia
+    DataPull.getCovidUpdatesAU().then((isUpdateSuccessful) => {
       let covidUpdateSuccessMsg = "";
       if (isUpdateSuccessful) {
         covidUpdateSuccessMsg = "The COVID cases have been successfully updated for Australia.";
       }
       else {
-        covidUpdateSuccessMsg = "There was an issue updating the COVID cases for Australia"
+        covidUpdateSuccessMsg = "There was an issue updating the COVID cases for Australia."
+      }
+      uncleLeeBot.sendMessage(
+        Number(process.env.DOHPAHMINE),
+        "Hello ah boy!\n\n" +
+
+        "The time now is: " + Utils.getDateTimeNowSydney() + "\n" +
+        covidUpdateSuccessMsg
+      );
+    });
+
+    // Trigger the pull to update the COVID cases into Firestore for Singapore
+    DataPull.getCovidUpdatesSG().then((isUpdateSuccessful) => {
+      let covidUpdateSuccessMsg = "";
+      if (isUpdateSuccessful) {
+        covidUpdateSuccessMsg = "The COVID cases have been successfully updated for Singapore.";
+      }
+      else {
+        covidUpdateSuccessMsg = "There was an issue updating the COVID cases for Singapore."
       }
       uncleLeeBot.sendMessage(
         Number(process.env.DOHPAHMINE),
