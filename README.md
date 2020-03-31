@@ -18,10 +18,10 @@ This bot also utilizes Google Cloud Firestore as a NoSQL database to read and wr
 ## What are the features come with the bot?
 - [x] Self-help "/command" for people to look up links to various resources
 - [x] Automated data fetching and parsing from an Australian government site for updated COVID-19 cases
+- [x] Automated data fetching and parsing from a Singapore government site for updated COVID-19 cases
 - [x] "Pull" feature to manually update the data for Australian COVID-19 cases
 - [x] Automated announcements at fixed frequencies regarding COVID-19 cases in Australia for selected group chats
 - [x] Keyword-based spam filter and automatic member removal for unsolicited marketing scams / messages
 - [x] Group chat registration via an admin-based "/command" into the datastore
-- [x] Group chat message updates via an admin-based "/command" for automatic bot announcements
-- [] Automated message forwarding from official channels to group chats
-- [] Automated data fetching and parsing from the Singapore government site for updated COVID-19 cases
+- [x] Group chat message updates via an admin-based "/command" for automatic (requires cron set-up) bot announcements
+- [x] Automated message forwarding from official channels to group chats
