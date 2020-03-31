@@ -123,6 +123,22 @@ module.exports = {
       })
   },
 
+  updateGrpChatIsSgn: (grpChatId, isSgn) => {
+    let Firestore = require('@google-cloud/firestore');
+    let db = new Firestore();
+
+    let grpChatsRef = db.collection('grpChats').doc(grpChatId.toString());
+    return grpChatsRef.set({
+      'isSgn': isSgn,
+    }, { merge: true})
+    .then(() => {
+      return true;  // Return true if success
+    })
+    .catch(() => {
+      return false; // Else if there's an error, return false
+    })
+  },
+
   updateGrpChatRegion: (chatId, chatRegion) => {
     let Firestore = require('@google-cloud/firestore');
     let db = new Firestore();
