@@ -32,11 +32,28 @@ module.exports = {
       'North America': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.REGION_NA + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
       'Rest of the World': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.REGION_ROTW + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]'
     };
-
     return regions;
   },
 
-  createInlineKeyboard: (btnLabelValueObj) => {
+  generateRegGrpChatIsSgn: (grpChatId) => {
+    let Types = require('./type_constants');
+    let isSgn = {
+      'Yes': '[t]' + Types.REGISTER_GROUP_CHAT_IS_SGN + '[/t][v]' + true + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
+      'No': '[t]' + Types.REGISTER_GROUP_CHAT_IS_SGN + '[/t][v]' + false + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
+    }
+    return isSgn;
+  },
+
+  generateCovidCaseReg: () => {
+    let Types = require('./type_constants');
+    let regions = {
+      'Singapore': '[t]' + Types.USER_SELECT_REGION + '[/t][v]' + Types.REGION_SG + '[/v]',
+      'Australia / New Zealand': '[t]' + Types.USER_SELECT_REGION + '[/t][v]' + Types.REGION_AU_NZ + '[/v]'
+    }
+    return regions;
+  },
+
+  createInlineKeyboardMarkup: (btnLabelValueObj) => {
     let inlineKeyboardMarkup = {
       'inline_keyboard': []
     };
