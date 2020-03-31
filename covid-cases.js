@@ -38,6 +38,7 @@ module.exports = {
       })
       .catch((err) => {
         console.log("There was an error getting the documents:", err);
+        throw err;
       });
   },
 
