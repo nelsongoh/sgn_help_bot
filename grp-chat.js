@@ -1,4 +1,50 @@
 module.exports = {
+  getChatIdsFromNonSgnRegion: (regionName) => {
+    let Firestore = require('@google-cloud/firestore');
+    let db = new Firestore();
+
+    let grpChatsRef = db.collection('grpChats');
+    let query = grpChatsRef.where('region', '==', regionName).where('isSgn', '==', false);
+
+    return query.get()
+      .then((snapshot) => {
+        if (snapshot.empty) {
+          return null;
+        }
+
+        let chatIds = [];
+
+        snapshot.forEach((doc) => {
+          chatIds.push(doc.id);
+        });
+
+        return chatIds;
+      })
+      .catch((err) => {
+        throw err;
+      })
+  },
+
+  getRegionFromChatId: (chatId) => {
+    let Firestore = require('@google-cloud/firestore');
+    let db = new Firestore();
+
+    let grpChatsRef = db.collection('grpChats').doc(chatId.toString());
+
+    return grpChatsRef.get()
+      .then((doc) => {
+        if (!doc.exists) {
+          return null;
+        }
+
+        let grpChatRegion = doc.data()['region'];
+        return grpChatRegion;
+      })
+      .catch((err) => {
+        throw err;
+      })
+  },
+
   getAllSgnChats: () => {
     let Firestore = require('@google-cloud/firestore');
     let db = new Firestore();
@@ -25,7 +71,7 @@ module.exports = {
       })
   },
 
-  getRegionChatIds: (regionName) => {
+  getChatIdsFromRegion: (regionName) => {
     let Firestore = require('@google-cloud/firestore');
     let db = new Firestore();
 
