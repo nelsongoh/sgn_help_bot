@@ -1,8 +1,4 @@
 module.exports = {
-  checkUserRegion: () => {
-
-  },
-
   getCallbackType: (cbqData) => {
     let regex = require('./regex');
     return cbqData.match(regex.cbqType)[0]
@@ -30,11 +26,11 @@ module.exports = {
   generateRegGrpChatRegions: (grpChatId) => {
     let Types = require('./type_constants');
     let regions = {
-      'Singapore': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.SG + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
-      'Australia / New Zealand': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.AU_NZ + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
-      'Europe / United Kingdom': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.EU_UK + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
-      'North America': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.NA + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
-      'Rest of the World': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.ROTW + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]'
+      'Singapore': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.REGION_SG + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
+      'Australia / New Zealand': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.REGION_AU_NZ + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
+      'Europe / United Kingdom': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.REGION_EU_UK + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
+      'North America': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.REGION_NA + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
+      'Rest of the World': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.REGION_ROTW + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]'
     };
 
     return regions;
@@ -71,6 +67,41 @@ module.exports = {
     }
 
     return inlineKeyboardMarkup;
+  },
+
+  getDateTimeNowSingapore: () => {
+    let currDateTime = new Date();
+    let currDateTimeStr = currDateTime.toLocaleTimeString(
+      'en-SG', {
+        timeZone: 'Asia/Singapore'
+      }
+    ) + ", " +
+    currDateTime.toLocaleDateString(
+      'en-SG', {
+        timeZone: 'Asia/Singapore', 
+        day: 'numeric', 
+        month: 'short', 
+        year: 'numeric'
+      }
+    );
+
+    return currDateTimeStr;
+  },
+
+  toDateTimeNowSingapore: (theDate) => {
+    return theDate.toLocaleTimeString(
+      'en-SG', {
+        timeZone: 'Asia/Singapore'
+      }
+    ) + ", " +
+    theDate.toLocaleDateString(
+      'en-SG', {
+        timeZone: 'Asia/Singapore', 
+        day: 'numeric', 
+        month: 'short', 
+        year: 'numeric'
+      }
+    )
   },
 
   getDateTimeNowSydney: () => {
