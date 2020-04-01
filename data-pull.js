@@ -11,59 +11,93 @@ module.exports = {
         let siteHtml = resp.data;
         let $ = cheerio.load(siteHtml);
 
-        // Obtain the summary title for the figures
-        let headerTitle = "";
-        
+        // Retrieve the 2 types of titles for the Singapore cases: Imported, and local
+        let headerEle = [];
         $('div h3 strong span').each((i, ele) => {
-          // 2 is a 'magic number' since that's the index of the site's header title that we want
-          if (i == 2) {
-            headerTitle = $(ele).text().trim().replace(/\s+/g, ' ');
-          }
-          // Stop iterating through once we have what we need
-          else if (i > 2) {
-            return false;
-          }
+            if (i > 2) {  // We don't need the rest after this
+              return false;
+            }
+            headerEle[i] = $(ele).text().trim().replace(/\s+/g, ' ');
         });
 
         // Generate the object that will hold the data for COVID-19 cases in Singapore
-        let caseObj = {};
+        // We now split the object into 2 types of cases: Imported, and local
+        let caseObj = {'imported': {}, 'local': {}}
+        caseObj['imported']['title'] = headerEle[1];
+        caseObj['local']['title'] = headerEle[2];
 
-        let tempTitle;
+        // We need 2 temporary variables to store one part of the array where we
+        // encounter 2 consecutive labels
+        let key = "";
+        let spareKey = "";
 
         // Obtain the labels and number of cases
-        $('td').each((i, ele) => {
-          // 14 is a 'magic number' as well, since that's the number of figures available 
-          // (index 0 to 13 is what we want, once we hit 14, we stop iterating)
-          if (i == 14) {
+        $('div[class=\'sfContentBlock\'] tr td').each((i, e) => {
+          // 18 is a 'magic' number for the number of elements we stop at  
+          if (i == 18) {
             return false;
           }
-          else {
-            // Otherwise if we hit an even-numbered index, this is the label
-            if (i % 2 == 0) {
-              tempTitle = $(ele).text();
-              caseObj[tempTitle] = "";
+          let caseType;
+          // The first 6 are a little problematic, needs some manual intervention
+          // (For the imported cases data)
+          if (i < 6) {
+            caseType = 'imported';
+            switch (i) {
+              case 0:
+                key = $(e).text();
+                break;
+              case 1:
+                caseObj[caseType][key] = $(e).text();
+                break;
+              case 2:
+                key = $(e).text();
+                break;
+              case 3:
+                spareKey = $(e).text();
+                break;
+              case 4:
+                caseObj[caseType][key] = $(e).text();
+                break
+              case 5:
+                caseObj[caseType][spareKey] = $(e).text(); 
+                break;
             }
-            // Odd-numbered indexes are the number of cases
+          }
+          // Otherwise the rest follow the alternate label and value pattern
+          else {
+            caseType = 'local';
+            // where even-numbered indexes are labels
+            if (i % 2 == 0) {
+              title = $(e).text()
+              caseObj[caseType][title] = "";
+            }
+            // and odd-numbered indexes are the number of cases
             // NOTE: We will store the number of cases as strings instead of integers, because
             // there are some figures which are represented as, e.g. 487 (+9)
             else {
-              caseObj[tempTitle] = $(ele).text();
+              caseObj[caseType][title] = $(e).text();
             }
           }
-        });
-
+        })
         /* Now we create the object that we will store in Firestore, as such:
         document -> {
           country: 'SG',
           dateTimeScraped: <datetime>
-          headerTitle: '...',
-          cases: stateToCases
+          cases: {
+            'imported': {
+              'title': ...,
+              ...
+            },
+            'local': {
+              'title': ...,
+              ...
+            }
+          }
         }
         */
        let addToStore = {
         'country': 'SG',
         'dateTimeScraped': new Date(),  // We include a timestamp for when this was updated
-        'headerSummary': headerTitle,  // and the summary title provided by the SG government for the figures
         'cases': caseObj
       }
 
