@@ -21,16 +21,26 @@ module.exports = {
           // We parse the date and time of the event scraped into a suitable string format
           let dateTime = Utils.toDateTimeNowSingapore(doc.data()['dateTimeScraped'].toDate());
           
-          // We add the header title from the Singapore website to the string first
-          outputStr += doc.data()['headerSummary'] + "\n\n";
-
-          // Then we iterate through the cases object and output the case numbers
-          for (let key in doc.data()['cases']) {
-            if (doc.data()['cases'].hasOwnProperty(key)) {
-              outputStr += (key + ": " + doc.data()['cases'][key] + "\n")
+          // We iterate through the types of cases first (We expect 'imported' and 'local')
+          for (let caseType in doc.data()['cases']) {
+            if (doc.data()['cases'].hasOwnProperty(caseType)) {
+              // We retrieve the title for this case type first
+              outputStr += doc.data()['cases'][caseType]['title'] + "\n\n";
+              // Then within the cases of that type, we iterate through the object
+              for (let label in doc.data()['cases'][caseType]) {
+                // If this is a title, we skip it since we've already added it into the string
+                if (label === 'title') {
+                  continue;
+                }
+                // Else these are the labels and case numbers
+                else {
+                  outputStr += (label + ": " + doc.data()['cases'][caseType][label] + "\n");
+                }
+              }
+              // We have a line separator between imported and local cases
+              outputStr += "------------------------------\n";
             }
           }
-
           outputStr += ("\n" + "Last retrieved on: " + dateTime + "\n" + Types.COVID_19_SG_GOV);
         });
 
