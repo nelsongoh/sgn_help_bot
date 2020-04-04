@@ -596,7 +596,7 @@ uncleLeeBot.on('callback_query', (cbq) => {
         .catch((err) => {
           // Else if there was an error, notify them that there was something wrong
           uncleLeeBot.editMessageText(
-            "I'm sorry, but something went wrong with retrieving the information for the COVID-19 cases!",
+            "I'm sorry, but something went wrong with retrieving the information for the COVID-19 cases:\n\n" + err,
             {
               'chat_id': cbq.message.chat.id,
               'message_id': cbq.message.message_id,
@@ -626,7 +626,7 @@ uncleLeeBot.on('callback_query', (cbq) => {
         .catch((err) => {
           // Else if there was an error, notify them that there was something wrong
           uncleLeeBot.editMessageText(
-            "I'm sorry, but something went wrong with retrieving the information for the COVID-19 cases!",
+            "I'm sorry, but something went wrong with retrieving the information for the COVID-19 cases:\n\n" + err,
             {
               'chat_id': cbq.message.chat.id,
               'message_id': cbq.message.message_id,
