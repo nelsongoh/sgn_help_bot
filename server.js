@@ -355,7 +355,7 @@ uncleLeeBot.onText(regex.spamFilter, (msg) => {
     // If there is an issue with kicking the user, notify me
     if (isSuccess) {
       uncleLeeBot.sendMessage(
-        Number(process.env.DOHPAHMINE),
+        Number(process.env.SGN_BAN_LIST_CHAT),
         "Ah boy, I've made a kick from a group chat, here's the details:\n\n" +
         "Group chat title: " + msg.chat.title + "\n" +
         "Kicked user: " + msg.from.first_name + " " + msg.from.last_name + "\n" +
@@ -371,7 +371,7 @@ uncleLeeBot.onText(regex.spamFilter, (msg) => {
   // If there's an issue with kicking the user, notify me
   .catch((err) => {
     uncleLeeBot.sendMessage(
-      Number(process.env.DOHPAHMINE),
+      Number(process.env.SGN_BAN_LIST_CHAT),
       "Ah boy ah, there was a problem trying to kick the spammer out. Here's the details:\n\n" +
       "Group chat title: " + msg.chat.title + "\n" +
       "User attempted to kick: " + msg.from.first_name + " " + msg.from.last_name + 
