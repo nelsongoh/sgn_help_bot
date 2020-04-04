@@ -79,7 +79,10 @@ module.exports = {
   "https://t.me/singaporeansintasmania\n\n" +
 
   "For Singaporeans in Adelaide:\n" +
-  "https://t.me/joinchat/QVH3hRj1M4bBV7y0CnaAxg",
+  "https://t.me/joinchat/QVH3hRj1M4bBV7y0CnaAxg\n\n" +
+
+  "For Singaporeans in New Zealand:\n" +
+  "https://t.me/singaporeansinnz",
 
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
