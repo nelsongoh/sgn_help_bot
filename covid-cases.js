@@ -26,15 +26,23 @@ module.exports = {
             if (doc.data()['cases'].hasOwnProperty(caseType)) {
               // We retrieve the title for this case type first
               outputStr += doc.data()['cases'][caseType]['title'] + "\n\n";
+
+              // Then we sort the cases in alphabetical order
+              let sorted_obj = {}
+              let unordered_obj = doc.data()['cases'][caseType];
+              Object.keys(unordered_obj).sort().forEach((key) => {
+                sorted_obj[key] = unordered_obj[key];
+              });
+
               // Then within the cases of that type, we iterate through the object
-              for (let label in doc.data()['cases'][caseType]) {
+              for (let label in sorted_obj) {
                 // If this is a title, we skip it since we've already added it into the string
                 if (label === 'title') {
                   continue;
                 }
                 // Else these are the labels and case numbers
                 else {
-                  outputStr += (label + ": " + doc.data()['cases'][caseType][label] + "\n");
+                  outputStr += (label + ": " + sorted_obj[label] + "\n");
                 }
               }
               // We have a line separator between imported and local cases
