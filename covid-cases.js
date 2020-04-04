@@ -77,10 +77,17 @@ module.exports = {
           // We add the header summary from the Australian website to the string first
           outputStr += doc.data()['headerSummary'] + "\n\n";
 
+          // We sort the cases by in alphabetical order
+          let sorted_obj = {}
+          let unordered_obj = doc.data()['cases'];
+          Object.keys(unordered_obj).sort().forEach((key) => {
+            sorted_obj[key] = unordered_obj[key];
+          });
+
           // Then we iterate through the cases object and output the cases
-          for (let key in doc.data()['cases']) {
-            if (doc.data()['cases'].hasOwnProperty(key)) {
-              outputStr += (key + ": " + doc.data()['cases'][key] + "\n")
+          for (let key in sorted_obj) {
+            if (sorted_obj.hasOwnProperty(key)) {
+              outputStr += (key + ": " + sorted_obj[key] + "\n")
             }
           }
 
