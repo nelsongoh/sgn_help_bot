@@ -11,74 +11,70 @@ module.exports = {
         let siteHtml = resp.data;
         let $ = cheerio.load(siteHtml);
 
-        // Retrieve the 2 types of titles for the Singapore cases: Imported, and local
-        let headerEle = [];
-        $('div h3 strong span').each((i, ele) => {
-            if (i > 2) {  // We don't need the rest after this
-              return false;
-            }
-            headerEle[i] = $(ele).text().trim().replace(/\s+/g, ' ');
+        // Generate the object that will hold the data for COVID-19 cases in Singapore
+        let caseObj = {'imported': {}, 'local': {}}
+        let caseType;
+
+        $('div[class=\'sfContentBlock\']').each((i, e) => {
+          // For the imported cases
+          if (i == 2) {
+            caseType = 'imported'
+            // We retrieve the title
+            caseObj[caseType]['title'] = $(e).find('div h3 strong span').text().trim().replace(/\s+/g, ' ');
+
+            let key = "";
+            let spareKey = "";
+
+            // Then we retrieve the case data for imported cases
+            $(e).find('tr td').each((i, e) => {
+              switch (i) {
+                case 0:
+                  key = $(e).text();
+                  break;
+                case 1:
+                  caseObj[caseType][key] = $(e).text();
+                case 2:
+                  key = $(e).text();
+                  break;
+                case 3:
+                  spareKey = $(e).text();
+                  break;
+                case 4:
+                  caseObj[caseType][key] = $(e).text();
+                  break
+                case 5:
+                  caseObj[caseType][spareKey] = $(e).text(); 
+                  break;
+                }
+            })
+          }
+          // For the local cases, we just retrieve the title first
+          if (i == 3) {
+            caseType = 'local';
+            caseObj[caseType]['title'] = $(e).find('div h3 strong span').text().trim().replace(/\s+/g, ' ');
+            return false;   // We kill the function, we no longer need to iterate through the other sfContentBlocks
+          }
         });
 
-        // Generate the object that will hold the data for COVID-19 cases in Singapore
-        // We now split the object into 2 types of cases: Imported, and local
-        let caseObj = {'imported': {}, 'local': {}}
-        caseObj['imported']['title'] = headerEle[1];
-        caseObj['local']['title'] = headerEle[2];
-
-        // We need 2 temporary variables to store one part of the array where we
-        // encounter 2 consecutive labels
-        let key = "";
-        let spareKey = "";
-
-        // Obtain the labels and number of cases
-        $('div[class=\'sfContentBlock\'] tr td').each((i, e) => {
-          // 18 is a 'magic' number for the number of elements we stop at  
-          if (i == 18) {
+        // For the local cases information
+        let label = "";
+        $('div[class=\'sf_cols\']').each((i, e) => {
+          // There are only 2 sf_cols we need, we don't need the rest, we can stop iterating after that
+          if (i > 1) {
             return false;
           }
-          let caseType;
-          // The first 6 are a little problematic, needs some manual intervention
-          // (For the imported cases data)
-          if (i < 6) {
-            caseType = 'imported';
-            switch (i) {
-              case 0:
-                key = $(e).text();
-                break;
-              case 1:
-                caseObj[caseType][key] = $(e).text();
-                break;
-              case 2:
-                key = $(e).text();
-                break;
-              case 3:
-                spareKey = $(e).text();
-                break;
-              case 4:
-                caseObj[caseType][key] = $(e).text();
-                break
-              case 5:
-                caseObj[caseType][spareKey] = $(e).text(); 
-                break;
-            }
-          }
-          // Otherwise the rest follow the alternate label and value pattern
-          else {
-            caseType = 'local';
-            // where even-numbered indexes are labels
+
+          // We retrieve the data we require
+          $(e).find('tr td').each((i, e) => {
             if (i % 2 == 0) {
-              title = $(e).text()
-              caseObj[caseType][title] = "";
+              label = $(e).text().trim().replace(/\s+/g, ' ')
+              caseObj[caseType][label] = "";
             }
-            // and odd-numbered indexes are the number of cases
-            // NOTE: We will store the number of cases as strings instead of integers, because
-            // there are some figures which are represented as, e.g. 487 (+9)
             else {
-              caseObj[caseType][title] = $(e).text();
+              caseObj[caseType][label] = $(e).text().trim().replace(/\s+/g, ' ');
             }
-          }
-        })
+          })
+        });
         /* Now we create the object that we will store in Firestore, as such:
         document -> {
           country: 'SG',
