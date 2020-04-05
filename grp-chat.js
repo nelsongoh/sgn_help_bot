@@ -1,4 +1,25 @@
 module.exports = {
+  getGrpChatNameWithId: (grpChatId) => {
+    let Firestore = require('@google-cloud/firestore');
+    let db = new Firestore();
+
+    let grpChatsRef = db.collection('grpChats').doc(grpChatId.toString());
+    
+    return grpChatsRef.get()
+      .then((doc) => {
+        if (!doc.exists) {
+          return null;
+        }
+
+        let grpChatName = doc.data()['grpChatTitle'];
+        return grpChatName;
+      })
+      .catch((err) => {
+        console.log(err);
+        throw err;
+      })
+  },
+
   getChatIdsFromNonSgnRegion: (regionName) => {
     let Firestore = require('@google-cloud/firestore');
     let db = new Firestore();
