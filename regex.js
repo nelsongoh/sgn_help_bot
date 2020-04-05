@@ -13,6 +13,7 @@ module.exports = {
   adminUpdateGrpMsg: /^\/updategrpmsg$/,
   adminForceCovidUpdate: /^\/forcecovidupdate$/,
   adminRunDiagnostics: /^\/rundiagnostics (.+)$/,
+  adminBanHammer: /^\/ban (.+)$/,
   // Regex for matching values in callback queries
   cbqType: /(?<=\[t\])(.*)(?=\[\/t\])/g,
   cbqValue: /(?<=\[v\])(.*)(?=\[\/v\])/g,
