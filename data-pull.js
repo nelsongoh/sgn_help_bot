@@ -16,11 +16,13 @@ module.exports = {
         let caseType;
 
         $('div[class=\'sfContentBlock\']').each((i, e) => {
-          // For the imported cases
-          if (i == 2) {
+          // We get the current string of our header
+          let currHeader = $(e).find('div h3 strong span').text().trim().replace(/\s+/g, ' ');
+          // and check to see if this is for the imported cases
+          if (currHeader.includes("Total Number of Imported Cases in Singapore")) {
             caseType = 'imported'
             // We retrieve the title
-            caseObj[caseType]['title'] = $(e).find('div h3 strong span').text().trim().replace(/\s+/g, ' ');
+            caseObj[caseType]['title'] = currHeader;
 
             let key = "";
             let spareKey = "";
@@ -48,8 +50,9 @@ module.exports = {
                 }
             })
           }
-          // For the local cases, we just retrieve the title first
-          if (i == 3) {
+          // For the local cases, we will only retrieve the title first
+          // (since the content belong in a different div class)
+          else if (currHeader.includes("Case Summary in Singapore")) {
             caseType = 'local';
             caseObj[caseType]['title'] = $(e).find('div h3 strong span').text().trim().replace(/\s+/g, ' ');
             return false;   // We kill the function, we no longer need to iterate through the other sfContentBlocks
