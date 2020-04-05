@@ -381,6 +381,27 @@ uncleLeeBot.onText(regex.spamFilter, (msg) => {
   })
 })
 
+// The listener for forwarded messages from users
+uncleLeeBot.on('message', (msg) => {
+  // Check if I am in the chat ID with myself and Uncle Lee, and this message came from me (and not Uncle Lee)
+  if ((msg.chat.id === msg.from.id) && (msg.from.id === Number(process.env.DOHPAHMINE))) {
+    // If we have a forwarded message
+    if (typeof msg.forward_from !== 'undefined') {
+      // Get the details of the forwarded message
+      uncleLeeBot.sendMessage(
+        Number(process.env.DOHPAHMINE),
+        "Ah boy ah,\n\n" +
+        "Message from original sender: " + msg.text + "\n" +
+        "User ID of original sender: " + msg.forward_from.id + "\n\n" +
+        "Details of forwarder:\n\n" +
+        "Name of forwarder: " + msg.from.first_name + " " + msg.from.last_name + "\n" +
+        "Username of forwarder: " + msg.from.username + "\n" +
+        "User ID of forwarder: " + msg.from.id
+      )
+    }
+  }
+})
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
                                 ADMIN-RELATED COMMANDS FROM HERE
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -684,6 +705,59 @@ uncleLeeBot.on('callback_query', (cbq) => {
     });
   }
 });
+
+// The BAN USER command (From all group chats that the bot administrates)
+uncleLeeBot.onText(regex.adminBanHammer, (msg) => {
+  if (msg.from.id === Number(process.env.DOHPAHMINE)) {
+    // We retrieve the user ID that we want to ban
+    let userToBan = Number(msg.text.split(' ')[1]);
+    
+    // If the user ID is valid
+    if (isNaN(userToBan) === false) {
+      // We gather all group chats that the bot is a part of
+      groupAdmin.getAllSgnChats().then((grpChatIds) => {
+        for (idx in grpChatIds) {
+          // We check to see if the user is in the group chat
+          uncleLeeBot.kickChatMember(grpChatIds[idx], userToBan).then((isSuccess) => {
+            if (isSuccess) {
+              uncleLeeBot.sendMessage(
+                Number(process.env.DOHPAHMINE),
+                "The user has been removed from group: " + grpChatIds[idx]
+              )
+            }
+            else {
+              uncleLeeBot.sendMessage(
+                Number(process.env.DOHPAHMINE),
+                "Could not kick this user out of the group: " + grpChatIds[idx]
+              )
+            }
+          }).catch((err) => {
+            uncleLeeBot.sendMessage(
+              Number(process.env.DOHPAHMINE),
+              "Ah boy ah, we have a problem kicking out the user from the group chat:\n\n" + err
+            )
+          })
+        }
+      })
+      // Send an error message to me if there's an error
+      .catch((err) => {
+        uncleLeeBot.sendMessage(
+          Number(process.env.DOHPAHMINE),
+          "Ah boy ah, there was a problem trying to retrieve the SGN group chat IDs:\n\n" + err
+        )
+      })
+    }
+    // Else, send a message to inform me
+    else {
+      uncleLeeBot.sendMessage(
+        Number(process.env.DOHPAHMINE),
+        "Unable to capture a valid user ID:\n\n" +
+        "Received: " + msg.text + "\n" +
+        "Parsed user ID is: " + msg.text.split(' ')[1]
+      )
+    }
+  }
+})
 
 // The UPDATE GROUP MESSAGE command
 uncleLeeBot.onText(regex.adminUpdateGrpMsg, (msg) => {
