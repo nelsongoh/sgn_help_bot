@@ -706,7 +706,7 @@ uncleLeeBot.on('callback_query', (cbq) => {
   }
 });
 
-// The BAN USER command (From all group chats that the bot administrates)
+// The BAN USER command (From all SGN group chats that the bot administrates)
 uncleLeeBot.onText(regex.adminBanHammer, (msg) => {
   if (msg.from.id === Number(process.env.DOHPAHMINE)) {
     // We retrieve the user ID that we want to ban
@@ -719,18 +719,31 @@ uncleLeeBot.onText(regex.adminBanHammer, (msg) => {
         for (idx in grpChatIds) {
           // We check to see if the user is in the group chat
           uncleLeeBot.kickChatMember(grpChatIds[idx], userToBan).then((isSuccess) => {
-            if (isSuccess) {
-              uncleLeeBot.sendMessage(
-                Number(process.env.DOHPAHMINE),
-                "The user has been removed from group: " + grpChatIds[idx]
-              )
-            }
-            else {
-              uncleLeeBot.sendMessage(
-                Number(process.env.DOHPAHMINE),
-                "Could not kick this user out of the group: " + grpChatIds[idx]
-              )
-            }
+            // We retrieve the group chat name with the group chat ID
+            groupAdmin.getGrpChatNameWithId(Number(grpChatIds[idx])).then((grpChatName) => {
+              // If we get a null, this means there's no result
+              if (grpChatName === null) {
+                // Notify the admin
+                uncleLeeBot.sendMessage(
+                  Number(process.env.DOHPAHMINE),
+                  "Something has gone wrong, there is no group chat with this ID: " + grpChatIds[idx]
+                )
+              }
+              else {
+                if (isSuccess) {
+                  uncleLeeBot.sendMessage(
+                    Number(process.env.DOHPAHMINE),
+                    "The user has been removed from group: " + grpChatName
+                  )
+                }
+                else {
+                  uncleLeeBot.sendMessage(
+                    Number(process.env.DOHPAHMINE),
+                    "Could not kick this user out of the group: " + grpChatName
+                  )
+                }
+              }
+            })
           }).catch((err) => {
             uncleLeeBot.sendMessage(
               Number(process.env.DOHPAHMINE),
