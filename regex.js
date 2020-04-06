@@ -62,8 +62,8 @@ module.exports = {
     '((?=(.|\n)*trad)((?=(.|\n)*thank)|(?=(.|\n)*finan)|(?=(.|\n)*trad))' +
     '((?=(.|\\n)*t.me\/)|(?=(.|\\n)*(\\+?\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4})))', '|',
 
-    // If the keywords are: cap AND $ AND (telegram link OR phone number)
-    '((?=(.|\n)*cap)(?=(.|\n)*\$)' +
+    // If the keywords are: (cap OR finan) AND $ AND (telegram link OR phone number)
+    '(((?=(.|\n)*cap)|(?=(.|\n)*cap))(?=(.|\n)*\$)' +
     '((?=(.|\\n)*t.me\/)|(?=(.|\\n)*(\\+?\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4})))', '|',
 
     // If the keywords are: income
