@@ -14,6 +14,7 @@ module.exports = {
   adminForceCovidUpdate: /^\/forcecovidupdate$/,
   adminRunDiagnostics: /^\/rundiagnostics (.+)$/,
   adminBanHammer: /^\/ban (.+)$/,
+  adminNehaSays: /^\/nehasays (.+)$/,
   // Regex for matching values in callback queries
   cbqType: /(?<=\[t\])(.*)(?=\[\/t\])/g,
   cbqValue: /(?<=\[v\])(.*)(?=\[\/v\])/g,
@@ -47,6 +48,10 @@ module.exports = {
     '(?=(.|\n)*AAAAAFXxeszLtcGrtm77zQ)', '|',
     '(?=(.|\n)*AAAAAFTT2-iEJvoBrlrexA)', '|',
 
+    // These are specific websites banned
+    '(?=(.|\n)*blockchain.com)', '|',
+    '(?=(.|\n)*bit-montage)', '|',
+
     // If the keywords are: thank AND (finan OR invest OR earn OR trad) AND (telegram link OR phone number)
     '((?=(.|\n)*thank)((?=(.|\n)*finan)|(?=(.|\n)*invest)|(?=(.|\n)*earn)|(?=(.|\n)*trad))' +
     '((?=(.|\\n)*t.me\/)|(?=(.|\\n)*(\\+?\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4})))', '|',
@@ -62,8 +67,8 @@ module.exports = {
     '((?=(.|\n)*trad)((?=(.|\n)*thank)|(?=(.|\n)*finan)|(?=(.|\n)*trad))' +
     '((?=(.|\\n)*t.me\/)|(?=(.|\\n)*(\\+?\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4})))', '|',
 
-    // If the keywords are: (cap OR finan) AND $ AND (telegram link OR phone number)
-    '(((?=(.|\n)*cap)|(?=(.|\n)*cap))(?=(.|\n)*\$)' +
+    // If the keywords are: (invest OR cap OR finan OR contact) AND $ AND (telegram link OR phone number)
+    '(((?=(.|\n)*invest)|(?=(.|\n)*cap)|(?=(.|\n)*finan)|(?=(.|\n)*contact))(?=(.|\n)*\$)' +
     '((?=(.|\\n)*t.me\/)|(?=(.|\\n)*(\\+?\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4})))', '|',
 
     // If the keywords are: income
