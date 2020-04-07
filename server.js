@@ -392,7 +392,9 @@ uncleLeeBot.on('message', (msg) => {
         Number(process.env.DOHPAHMINE),
         "Ah boy ah,\n\n" +
         "Message from original sender: " + msg.text + "\n" +
-        "User ID of original sender: " + msg.forward_from.id + "\n\n" +
+        "Name of original sender: " + msg.forward_from.first_name + " " + msg.forward_from.last_name + "\n" +
+        "Username of original sender: " + msg.forward_from.username + "\n" +
+        "[ USER ] ID of original sender: " + msg.forward_from.id + "\n" +
         "Details of forwarder:\n\n" +
         "Name of forwarder: " + msg.from.first_name + " " + msg.from.last_name + "\n" +
         "Username of forwarder: " + msg.from.username + "\n" +
@@ -589,7 +591,12 @@ uncleLeeBot.on('callback_query', (cbq) => {
           'message_id': cbq.message.message_id,
           'reply_markup': Utils.createInlineKeyboardMarkup(grpChatIsSgnOpts)
         }
-      );
+      )
+      // It is possible that the message has already been edited, and an error is thrown
+      // we just ignore the error and do nothing
+      .catch((err => {
+        
+      }));
     })
     .catch((err) => {
       uncleLeeBot.answerCallbackQuery(cbq.id);
@@ -612,7 +619,12 @@ uncleLeeBot.on('callback_query', (cbq) => {
                 'inline_keyboard': [[]]
               }
             }
-          );
+          )
+          // It is possible that the message has already been edited, and an error is thrown
+          // we just ignore the error and do nothing
+          .catch((err => {
+            
+          }));
         })
         .catch((err) => {
           // Else if there was an error, notify them that there was something wrong
@@ -625,7 +637,12 @@ uncleLeeBot.on('callback_query', (cbq) => {
                 'inline_keyboard': [[]]
               }
             }
-          );
+          )
+          // It is possible that the message has already been edited, and an error is thrown
+          // we just ignore the error and do nothing
+          .catch((err => {
+            
+          }));
         })
         break;
       
@@ -642,7 +659,12 @@ uncleLeeBot.on('callback_query', (cbq) => {
                 'inline_keyboard': [[]]
               }
             }
-          );
+          )
+          // It is possible that the message has already been edited, and an error is thrown
+          // we just ignore the error and do nothing
+          .catch((err => {
+            
+          }));
         })
         .catch((err) => {
           // Else if there was an error, notify them that there was something wrong
@@ -655,7 +677,12 @@ uncleLeeBot.on('callback_query', (cbq) => {
                 'inline_keyboard': [[]]
               }
             }
-          );
+          )
+          // It is possible that the message has already been edited, and an error is thrown
+          // we just ignore the error and do nothing
+          .catch((err => {
+            
+          }));
         })
         break;
 
@@ -669,7 +696,12 @@ uncleLeeBot.on('callback_query', (cbq) => {
               'inline_keyboard': [[]]
             }
           }
-        );
+        )
+        // It is possible that the message has already been edited, and an error is thrown
+        // we just ignore the error and do nothing
+        .catch((err => {
+          
+        }));
         break;
     }
   }
@@ -701,7 +733,12 @@ uncleLeeBot.on('callback_query', (cbq) => {
             'inline_keyboard': [[]]
           }
         }
-      );
+      )
+      // It is possible that the message has already been edited, and an error is thrown
+      // we just ignore the error and do nothing
+      .catch((err => {
+        
+      }));
     });
   }
 });
@@ -709,16 +746,20 @@ uncleLeeBot.on('callback_query', (cbq) => {
 // The BAN USER command (From all SGN group chats that the bot administrates)
 uncleLeeBot.onText(regex.adminBanHammer, (msg) => {
   if (msg.from.id === Number(process.env.DOHPAHMINE)) {
+    let splitMsg = msg.text.split(' ', 2);
     // We retrieve the user ID that we want to ban
-    let userToBan = Number(msg.text.split(' ')[1]);
-    
+    let userToBan = Number(splitMsg[1]);
+
     // If the user ID is valid
     if (isNaN(userToBan) === false) {
-      // We gather all group chats that the bot is a part of
+      // We gather all SGN group chats that the bot is a part of
       groupAdmin.getAllSgnChats().then((grpChatIds) => {
         for (idx in grpChatIds) {
-          // We check to see if the user is in the group chat
+          // We kick the user out of the group
           uncleLeeBot.kickChatMember(grpChatIds[idx], userToBan).then((isSuccess) => {
+            return isSuccess;
+          })
+          .then((isSuccess) => {
             // We retrieve the group chat name with the group chat ID
             groupAdmin.getGrpChatNameWithId(Number(grpChatIds[idx])).then((grpChatName) => {
               // If we get a null, this means there's no result
@@ -727,24 +768,26 @@ uncleLeeBot.onText(regex.adminBanHammer, (msg) => {
                 uncleLeeBot.sendMessage(
                   Number(process.env.DOHPAHMINE),
                   "Something has gone wrong, there is no group chat with this ID: " + grpChatIds[idx]
-                )
+                );
               }
               else {
                 if (isSuccess) {
                   uncleLeeBot.sendMessage(
                     Number(process.env.DOHPAHMINE),
                     "The user has been removed from group: " + grpChatName
-                  )
+                  );
                 }
                 else {
                   uncleLeeBot.sendMessage(
                     Number(process.env.DOHPAHMINE),
                     "Could not kick this user out of the group: " + grpChatName
-                  )
+                  );
                 }
+                return;
               }
-            })
-          }).catch((err) => {
+            });
+          })
+          .catch((err) => {
             uncleLeeBot.sendMessage(
               Number(process.env.DOHPAHMINE),
               "Ah boy ah, we have a problem kicking out the user from the group chat:\n\n" + err
@@ -871,3 +914,8 @@ uncleLeeBot.onText(regex.cmdIdMe, (msg) => {
     "Their user ID is: " + msg.from.id,
   );
 });
+
+// The NEHA SAYS command
+uncleLeeBot.onText(regex.adminNehaSays, (msg) => {
+  // if (msg.from.id === Number())
+})
