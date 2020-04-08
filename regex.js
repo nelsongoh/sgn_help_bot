@@ -41,6 +41,8 @@ module.exports = {
     // If the keywords are: pay AND (invest OR cap OR trad) AND (telegram link OR phone number)
     '((?=(.|\n)*pay)((?=(.|\n)*invest)|(?=(.|\n)*cap)|(?=(.|\n)*trad))' +
     '((?=(.|\\n)*t.me\/)|(?=(.|\\n)*(\\+?\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4})))', '|',
+    // If the keywords are: pay AND invest AND comm
+    '((?=(.|\n)*pay)(?=(.|\n)*invest)(?=(.|\n)*comm))' + '|',
 
     // These are specific banned chat groups
     '(?=(.|\n)*AAAAAFY3TYmivxjQejlZPA)', '|',
@@ -91,6 +93,9 @@ module.exports = {
     // If the keywords are: contact AND (telegram link OR phone number)
     '((?=(.|\n)*contact)' +
     '((?=(.|\\n)*t.me\/)|(?=(.|\\n)*(\\+?\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4})))', '|',
+
+    // If the keywords are: sex AND dat(ing)
+    '((?=(.|\n)*sex)(?=(.|\n)*dat))' + '|',
     
     // If there's this specific domain mentioned
     '((?=(.|\n)*.page.link))', // LAST ENTRY CANNOT HAVE A PIPE OPERATOR
