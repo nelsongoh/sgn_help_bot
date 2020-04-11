@@ -3,7 +3,6 @@ const Promise = require('bluebird');
 Promise.config({
   cancellation: true
 });
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const Utils = require('./utils');
@@ -13,6 +12,7 @@ const covidCases = require('./covid-cases');
 const groupAdmin = require('./grp-chat');
 const regex = require('./regex');
 const Types = require('./type_constants');
+const spamApi = require('./spam_detect/spam_api');
 
 const uncleLeeBot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN);
 uncleLeeBot.setWebHook(process.env.WEBHOOK_URL + "/" + process.env.WEBHOOK_TOKEN);
@@ -348,45 +348,55 @@ uncleLeeBot.on('channel_post', (msg) => {
   }
 });
 
-// The listener for potential spam messages from user
-uncleLeeBot.onText(regex.spamFilter, (msg) => {
-  // We kick the user out first upon spam detection
-  uncleLeeBot.kickChatMember(msg.chat.id, msg.from.id).then((isSuccess) => {
-    // If there is an issue with kicking the user, notify me
-    if (isSuccess) {
-      uncleLeeBot.sendMessage(
-        Number(process.env.SGN_BAN_LIST_CHAT),
-        "Ah boy, I've made a kick from a group chat, here's the details:\n\n" +
-        "Group chat title: " + msg.chat.title + "\n" +
-        "Kicked user: " + msg.from.first_name + " " + msg.from.last_name + "\n" +
-        " (" + msg.from.username + ")" + "\n" +
-        "For spamming: " + msg.text
-      )
-    }
-  })
-  // Then we clean up the message from the group chat
-  .then(() => {
-    uncleLeeBot.deleteMessage(msg.chat.id, msg.message_id);
-  })
-  // If there's an issue with kicking the user, notify me
-  .catch((err) => {
-    uncleLeeBot.sendMessage(
-      Number(process.env.SGN_BAN_LIST_CHAT),
-      "Ah boy ah, there was a problem trying to kick the spammer out. Here's the details:\n\n" +
-      "Group chat title: " + msg.chat.title + "\n" +
-      "User attempted to kick: " + msg.from.first_name + " " + msg.from.last_name + 
-      " (" + msg.from.username + ")" + "\n" +
-      "Reason: " + err
-    )
-  })
-})
-
-// The listener for forwarded messages from users
+// The listener for messages from users
 uncleLeeBot.on('message', (msg) => {
-  // Check if I am in the chat ID with myself and Uncle Lee, and this message came from me (and not Uncle Lee)
-  if ((msg.chat.id === msg.from.id) && (msg.from.id === Number(process.env.DOHPAHMINE))) {
-    // If we have a forwarded message
-    if (typeof msg.forward_from !== 'undefined') {
+  // We do a spam analysis on the message, if the text isn't empty
+  if (typeof msg.text !== 'undefined') {
+    spamApi.detectMessage(msg.text).then((isSpam) => {
+      if (isSpam) {
+        // We kick the user out first upon spam detection
+        uncleLeeBot.kickChatMember(msg.chat.id, msg.from.id).then((isSuccess) => {
+          // If there is an issue with kicking the user, notify me
+          if (isSuccess) {
+            uncleLeeBot.sendMessage(
+              Number(process.env.SGN_BAN_LIST_CHAT),
+              "Ah boy, I've made a kick from a group chat, here's the details:\n\n" +
+              "Group chat title: " + msg.chat.title + "\n" +
+              "Kicked user: " + msg.from.first_name + " " + msg.from.last_name + "\n" +
+              " (" + msg.from.username + ")" + "\n" +
+              "For spamming: " + msg.text
+            );
+          }
+        })
+        // Then we clean up the message from the group chat
+        .then(() => {
+          uncleLeeBot.deleteMessage(msg.chat.id, msg.message_id);
+        })
+        // If there's an issue with kicking the user, notify me
+        .catch((err) => {
+          uncleLeeBot.sendMessage(
+            Number(process.env.SGN_BAN_LIST_CHAT),
+            "Ah boy ah, there was a problem trying to kick the spammer out. Here's the details:\n\n" +
+            "Group chat title: " + msg.chat.title + "\n" +
+            "User attempted to kick: " + msg.from.first_name + " " + msg.from.last_name + 
+            " (" + msg.from.username + ")" + "\n" +
+            "Reason: " + err
+          );
+        });
+      }
+    })
+    .catch((err) => {
+      uncleLeeBot.sendMessage(
+        process.env.DOHPAHMINE,
+        "Ah boy ah, we got a problem with the spam detection API:\n\n" + err + "\n\nThe message sent was:\n\n" + msg.text
+      );
+    });
+  }
+
+  // If we have a forwarded message from myself, then start getting details about the original sender
+  if (typeof msg.forward_from !== 'undefined') {
+        // Check if I am in the chat ID with myself and Uncle Lee, and this message came from me (and not Uncle Lee)
+    if ((msg.chat.id === msg.from.id) && (msg.from.id === Number(process.env.DOHPAHMINE))) {
       // Get the details of the forwarded message
       uncleLeeBot.sendMessage(
         Number(process.env.DOHPAHMINE),
