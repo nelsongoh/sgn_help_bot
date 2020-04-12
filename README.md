@@ -1,4 +1,4 @@
-Last updated: 31st March 2020
+Last updated: 11th April 2020
 
 # SGN Help Bot
 
@@ -21,7 +21,8 @@ This bot also utilizes Google Cloud Firestore as a NoSQL database to read and wr
 - [x] Automated data fetching and parsing from government sites for updated COVID-19 cases (Australia and Singapore)
 - [x] "Pull" feature to manually update the data for supported COVID-19 cases
 - [x] Automated announcements at fixed frequencies regarding COVID-19 cases for selected group chats
-- [x] Keyword-based spam filter and automatic member removal for unsolicited marketing scams / messages
+- [x] Machine learning-based spam filter and automatic member and message removal
+- [x] ~~Keyword-based spam filter and automatic member removal for unsolicited marketing scams / messages~~ (Deprecated)
 - [x] Group chat registration via an admin-based "/command" into the datastore
 - [x] Group chat message updates via an admin-based "/command" for automatic (requires cron set-up) bot announcements
 - [x] Automated message forwarding from official channels to group chats
