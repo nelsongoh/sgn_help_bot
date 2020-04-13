@@ -27,7 +27,7 @@ module.exports = {
     let Types = require('./type_constants');
     let regions = {
       'Singapore': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.REGION_SG + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
-      'Australia / New Zealand': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.REGION_AU_NZ + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
+      'Australia': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.REGION_AU + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
       'Europe / United Kingdom': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.REGION_EU_UK + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
       'North America': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.REGION_NA + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]',
       'Rest of the World': '[t]' + Types.REGISTER_GROUP_CHAT + '[/t][v]' + Types.REGION_ROTW + '[/v]' + '[gcid]' + grpChatId.toString() + '[/gcid]'
@@ -48,7 +48,7 @@ module.exports = {
     let Types = require('./type_constants');
     let regions = {
       'Singapore': '[t]' + Types.USER_SELECT_COVID_REGION + '[/t][v]' + Types.REGION_SG + '[/v]',
-      'Australia / New Zealand': '[t]' + Types.USER_SELECT_COVID_REGION + '[/t][v]' + Types.REGION_AU_NZ + '[/v]'
+      'Australia': '[t]' + Types.USER_SELECT_COVID_REGION + '[/t][v]' + Types.REGION_AU + '[/v]'
     }
     return regions;
   },
@@ -57,7 +57,7 @@ module.exports = {
     let Types = require('./type_constants');
     let regions = {
       'Singapore': '[t]' + Types.USER_SELECT_HELP_MSG_REGION + '[/t][v]' + Types.REGION_SG + '[/v]',
-      'Australia / New Zealand': '[t]' + Types.USER_SELECT_HELP_MSG_REGION + '[/t][v]' + Types.REGION_AU_NZ + '[/v]'
+      'Australia': '[t]' + Types.USER_SELECT_HELP_MSG_REGION + '[/t][v]' + Types.REGION_AU + '[/v]'
     }
     return regions;
   },

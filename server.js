@@ -69,9 +69,9 @@ app.get("/covid-19/sg/fetch", (req, res) => {
 });
 
 // Listening for the CRON JOB request to push updates to the group chats
-app.get("/grpchat/updates/au-nz", (req, res) => {
+app.get("/grpchat/updates/au", (req, res) => {
   // Retrieve an object, where each key-value pair is a grpChatId mapped to a grpChatMsg
-  groupAdmin.getBroadcastInfo(Types.REGION_AU_NZ).then((chatIdToMsgObj) => {
+  groupAdmin.getBroadcastInfo(Types.REGION_AU).then((chatIdToMsgObj) => {
     for (let chatId in chatIdToMsgObj) {
       uncleLeeBot.sendMessage(
         Number(chatId),
@@ -106,7 +106,7 @@ app.get("/covid-19/au/announce", (req, res) => {
   // Retrieve the latest COVID-19 cases for AU
   covidCases.getCovidCasesAU().then((caseInfo) => {
     // Then we retrieve the group chats who are in the AU / NZ region
-    groupAdmin.getChatIdsFromNonSgnRegion(Types.REGION_AU_NZ).then((chatIdList) => {
+    groupAdmin.getChatIdsFromNonSgnRegion(Types.REGION_AU).then((chatIdList) => {
       if (chatIdList !== null) {
         // For each chat ID in the list
         for (let idx in chatIdList) {
@@ -193,7 +193,7 @@ uncleLeeBot.onText(regex.cmdHelp, (msg) => {
         if (grpChatRegion == Types.REGION_SG) {
           helpMsg = Messages.SG_MSGS.HELP_MSG;
         }
-        else if (grpChatRegion == Types.REGION_AU_NZ) {
+        else if (grpChatRegion == Types.REGION_AU) {
           helpMsg = Messages.AU_MSGS.HELP_MSG;
         }
         uncleLeeBot.sendMessage(
@@ -281,8 +281,8 @@ uncleLeeBot.onText(regex.cmdGetCases, (msg) => {
       }
       else {
         switch(region) {
-          // If this is the AU / NZ region, show cases in that region
-          case Types.REGION_AU_NZ:
+          // If this is the AU region, show cases in that region
+          case Types.REGION_AU:
             // We need to invoke the Promise-based method to get the values from Firestore
             covidCases.getCovidCasesAU().then((casesUpdate) => {
               // Once we have it, we send a reply to the user
@@ -732,8 +732,8 @@ uncleLeeBot.on('callback_query', (cbq) => {
         })
         break;
       
-      // If Australia / New Zealand was selected
-      case Types.REGION_AU_NZ:
+      // If Australia was selected
+      case Types.REGION_AU:
         covidCases.getCovidCasesAU().then((casesAU) => {
           // Send the cases update to the user
           uncleLeeBot.editMessageText(
@@ -837,8 +837,8 @@ uncleLeeBot.on('callback_query', (cbq) => {
         // Return the help message for Singapore
         helpMsg = Messages.SG_MSGS.HELP_MSG;
         break;
-      case Types.REGION_AU_NZ:
-        // Return the help message for Australia / New Zealand
+      case Types.REGION_AU:
+        // Return the help message for Australia
         helpMsg = Messages.AU_MSGS.HELP_MSG;
         break;
     }   

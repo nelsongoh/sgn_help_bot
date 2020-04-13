@@ -8,7 +8,8 @@ module.exports = {
   'USER_SELECT_CBREAKER_FAQ_OPT': '5',
 
   // Country / region constants
-  'REGION_AU_NZ': 'au_nz', // Australia / New Zealand
+  'REGION_AU': 'au', // Australia
+  'REGION_NZ': 'nz', // New Zealand
   'REGION_NA': 'na', // North America
   'REGION_EU_UK': 'eu_uk', // Europe / United Kingdom,
   'REGION_SG': 'sg', // Singapore
