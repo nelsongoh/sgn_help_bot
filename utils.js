@@ -47,13 +47,35 @@ module.exports = {
   generateCovidCaseReg: () => {
     let Types = require('./type_constants');
     let regions = {
-      'Singapore': '[t]' + Types.USER_SELECT_REGION + '[/t][v]' + Types.REGION_SG + '[/v]',
-      'Australia / New Zealand': '[t]' + Types.USER_SELECT_REGION + '[/t][v]' + Types.REGION_AU_NZ + '[/v]'
+      'Singapore': '[t]' + Types.USER_SELECT_COVID_REGION + '[/t][v]' + Types.REGION_SG + '[/v]',
+      'Australia / New Zealand': '[t]' + Types.USER_SELECT_COVID_REGION + '[/t][v]' + Types.REGION_AU_NZ + '[/v]'
     }
     return regions;
   },
 
-  createInlineKeyboardMarkup: (btnLabelValueObj) => {
+  generateHelpMsgReg: () => {
+    let Types = require('./type_constants');
+    let regions = {
+      'Singapore': '[t]' + Types.USER_SELECT_HELP_MSG_REGION + '[/t][v]' + Types.REGION_SG + '[/v]',
+      'Australia / New Zealand': '[t]' + Types.USER_SELECT_HELP_MSG_REGION + '[/t][v]' + Types.REGION_AU_NZ + '[/v]'
+    }
+    return regions;
+  },
+
+  generateCBreakerMsgOpts: () => {
+    let Types = require('./type_constants');
+    let Messages = require('./bot_messages/messages');
+    let cBreakerMsgs = Messages.SG_MSGS.CB_RULES_QN_MSG;
+    let cBreakerOpts = {}
+
+    cBreakerMsgs.map((ele) => {
+      let btnTxt = Object.keys(ele)[0];
+      cBreakerOpts[btnTxt] = '[t]' + Types.USER_SELECT_CBREAKER_FAQ_OPT + '[/t][v]' + ele[btnTxt] + '[/v]'
+    })
+    return cBreakerOpts;
+  },
+
+  createInlineKeyboardMarkup: (btnLabelValueObj, rowSize) => {
     let inlineKeyboardMarkup = {
       'inline_keyboard': []
     };
@@ -61,9 +83,9 @@ module.exports = {
     let btnRow = [];
     // For each button label
     for (let key in btnLabelValueObj) {
-      // We will only store 2 buttons per row of information
-      // If we already have 2 buttons
-      if (btnRow.length == 2) {
+      // We will only store "rowSize" buttons per row of information
+      // If we already have the number of buttons as specified by the row size
+      if (btnRow.length == rowSize) {
         // Add it to the keyboard row
         inlineKeyboardMarkup['inline_keyboard'].push(btnRow);
         // Reset the row
