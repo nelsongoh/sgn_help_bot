@@ -8,6 +8,10 @@ module.exports = {
   cmdChats: /^chats$/i,
   cmdGetCases: /^getcases$/i,
   cmdIdMe: /^idme$/,
+  cmdBudget: /^budget$/,
+  cmdShn: /^shn$/,
+  cmdCBreak: /^cbreak$/,
+  cmdGroceries: /^groceries$/,
   // Regex for admin commands
   adminCmdRegGrpChat: /^\/reggrpchat$/i,
   adminUpdateGrpMsg: /^\/updategrpmsg$/,
