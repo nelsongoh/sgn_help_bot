@@ -248,7 +248,7 @@ uncleLeeBot.onText(regex.cmdFltStatus, (msg) => {
 uncleLeeBot.onText(regex.cmdChats, (msg) => {
   uncleLeeBot.sendMessage(
     msg.chat.id,
-    Messages.UTIL_MSGS.CHAT_GRPS_MSG + Messages.UTIL_MSGS.PVT_MSG_OPT,
+    Messages.AU_MSGS.CHAT_GRPS_MSG + Messages.UTIL_MSGS.PVT_MSG_OPT,
     {
       'reply_to_message_id': msg.message_id,
     },
