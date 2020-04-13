@@ -16,9 +16,9 @@ module.exports = {
 
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-  GOING_HOME_MSG: "Here are some links and [ commands ] to help you if you're going home:\n\n" +
+  GOING_HOME_MSG: "Here are some links and commands to help you if you're going home:\n\n" +
 
-  "[ flts ] - Links to flight statuses for Singapore Airlines, and Scoot\n\n" +
+  "flts - Links to flight statuses for Singapore Airlines, and Scoot\n\n" +
 
   "Need help shipping stuff back to Singapore?:\n" +
   "https://docs.google.com/document/d/1-Xqqq10IyFnf4f94Kt4x9a-RP-YsKhYTEByIasoeSDI/edit#bookmark=id.q91e4ticxq3r\n\n" +
