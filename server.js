@@ -6,7 +6,7 @@ Promise.config({
 const express = require('express');
 const bodyParser = require('body-parser');
 const Utils = require('./utils');
-const Messages = require('./messages');
+const Messages = require('./bot_messages/messages');
 const DataPull = require('./data-pull');
 const covidCases = require('./covid-cases');
 const groupAdmin = require('./grp-chat');
@@ -157,33 +157,65 @@ app.get("/covid-19/sg/announce", (req, res) => {
 
 // On START
 uncleLeeBot.onText(regex.cmdStart, (msg) => {
+  // If this is a 1-on-1 chat
   if (msg.chat.id === msg.from.id) {
+    // We need to ask the user which region's message they would like to see
     uncleLeeBot.sendMessage(
-      msg.from.id,
-      Messages.HELP_MSG,
+      msg.chat.id,
+      "Which region's help message would you like to see?",
       {
-        'reply_to_message_id': msg.message_id,
-      },
+        'reply_markup': Utils.createInlineKeyboardMarkup(Utils.generateHelpMsgReg(), 2)
+      }
     );
   }
 });
 
 // The HELP command
 uncleLeeBot.onText(regex.cmdHelp, (msg) => {
-  uncleLeeBot.sendMessage(
-    msg.chat.id,
-    Messages.HELP_MSG + Messages.PVT_MSG_OPT,
-    {
-      'reply_to_message_id': msg.message_id,
-    },
-  );
+  // Check if this is a group chat, or a 1-to-1 chat
+  // If this is a 1-to-1 chat, we need to ask the user which region's help message they're looking for
+  if (msg.chat.id === msg.from.id) {
+    // Send out a inline keyboard button to let them choose
+    uncleLeeBot.sendMessage(
+      msg.chat.id,
+      "Which region's help message would you like to see?",
+      {
+        'reply_markup': Utils.createInlineKeyboardMarkup(Utils.generateHelpMsgReg(), 2)
+      }
+    );
+  }
+  // Else if this is a group chat, we check which region this group chat belongs to
+  else {
+    groupAdmin.getRegionFromChatId(msg.chat.id)
+      .then((grpChatRegion) => {
+        // With the group chat region, we reply with the appropriate help message
+        let helpMsg = "";
+        if (grpChatRegion == Types.REGION_SG) {
+          helpMsg = Messages.SG_MSGS.HELP_MSG;
+        }
+        else if (grpChatRegion == Types.REGION_AU_NZ) {
+          helpMsg = Messages.AU_MSGS.HELP_MSG;
+        }
+        uncleLeeBot.sendMessage(
+          msg.chat.id,
+          helpMsg
+        )
+      })
+      .catch((err) => {
+        // If there's an error, inform me of it
+        uncleLeeBot.sendMessage(
+          Number(process.env.DOHPAHMINE),
+          "Ah boy ah, there was an issue with retrieving the group chat region with this group chat ID:\n\n" + err
+        );
+      })
+  }
 });
 
 // The INFO command
 uncleLeeBot.onText(regex.cmdInfo, (msg) => {
   uncleLeeBot.sendMessage(
     msg.chat.id,
-    Messages.INFO_MSG + Messages.PVT_MSG_OPT,
+    Messages.UTIL_MSGS.INFO_MSG + Messages.UTIL_MSGS.PVT_MSG_OPT,
     {
       'reply_to_message_id': msg.message_id
     },
@@ -194,7 +226,7 @@ uncleLeeBot.onText(regex.cmdInfo, (msg) => {
 uncleLeeBot.onText(regex.cmdGoingHome, (msg) => {
   uncleLeeBot.sendMessage(
     msg.chat.id,
-    Messages.GOING_HOME_MSG,
+    Messages.AU_MSGS.GOING_HOME_MSG,
     {
       'reply_to_message_id': msg.message_id,
     },
@@ -205,7 +237,7 @@ uncleLeeBot.onText(regex.cmdGoingHome, (msg) => {
 uncleLeeBot.onText(regex.cmdFltStatus, (msg) => {
   uncleLeeBot.sendMessage(
     msg.chat.id,
-    Messages.FLT_STATUS_MSG,
+    Messages.AU_MSGS.FLT_STATUS_MSG,
     {
       'reply_to_message_id': msg.message_id,
     },
@@ -216,7 +248,7 @@ uncleLeeBot.onText(regex.cmdFltStatus, (msg) => {
 uncleLeeBot.onText(regex.cmdChats, (msg) => {
   uncleLeeBot.sendMessage(
     msg.chat.id,
-    Messages.CHAT_GRPS_MSG + Messages.PVT_MSG_OPT,
+    Messages.UTIL_MSGS.CHAT_GRPS_MSG + Messages.UTIL_MSGS.PVT_MSG_OPT,
     {
       'reply_to_message_id': msg.message_id,
     },
@@ -232,7 +264,7 @@ uncleLeeBot.onText(regex.cmdGetCases, (msg) => {
       msg.chat.id,
       "Which region's COVID-19 cases would you like to see?",
       {
-        'reply_markup': Utils.createInlineKeyboardMarkup(Utils.generateCovidCaseReg())
+        'reply_markup': Utils.createInlineKeyboardMarkup(Utils.generateCovidCaseReg(), 2)
       }
     )
   }
@@ -317,6 +349,50 @@ uncleLeeBot.onText(regex.cmdGetCases, (msg) => {
   }
 });
 
+// The BUDGET command
+uncleLeeBot.onText(regex.cmdBudget, (msg) => {
+  uncleLeeBot.sendMessage(
+    msg.chat.id,
+    Messages.SG_MSGS.BUDGET_MSG,
+    {
+      'reply_to_message_id': msg.message_id,
+    },
+  );
+});
+
+// The SHN command
+uncleLeeBot.onText(regex.cmdShn, (msg) => {
+  uncleLeeBot.sendMessage(
+    msg.chat.id,
+    Messages.SG_MSGS.SHN_MSG,
+    {
+      'reply_to_message_id': msg.message_id,
+    },
+  );
+});
+
+// The CBREAK command
+uncleLeeBot.onText(regex.cmdCBreak, (msg) => {
+  uncleLeeBot.sendMessage(
+    msg.chat.id,
+    Messages.SG_MSGS.CB_RULES_QN_HEADER_MSG,
+    {
+      'reply_markup': Utils.createInlineKeyboardMarkup(Utils.generateCBreakerMsgOpts(), 1),
+    },
+  );
+});
+
+// The GROCERIES command
+uncleLeeBot.onText(regex.cmdGroceries, (msg) => {
+  uncleLeeBot.sendMessage(
+    msg.chat.id,
+    Messages.SG_MSGS.GROCERIES_MSG,
+    {
+      'reply_to_message_id': msg.message_id,
+    },
+  );
+});
+
 // The listener for official SGN channel announcements
 uncleLeeBot.on('channel_post', (msg) => {
   let chatType = msg.chat.type;
@@ -330,7 +406,7 @@ uncleLeeBot.on('channel_post', (msg) => {
         for (let idx in grpChatIds) {
           uncleLeeBot.sendMessage(
             Number(grpChatIds[idx]),
-            Messages.SGN_CHN_ANNOUNCE_MSG
+            Messages.UTIL_MSGS.SGN_CHN_ANNOUNCE_MSG
           );
         }
       }
@@ -412,7 +488,7 @@ uncleLeeBot.on('message', (msg) => {
       )
     }
   }
-})
+});
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
                                 ADMIN-RELATED COMMANDS FROM HERE
@@ -433,7 +509,7 @@ uncleLeeBot.onText(regex.adminCmdRegGrpChat, (msg) => {
           Number(process.env.DOHPAHMINE),
           "Ah boy ah, which region do you want this group chat [ " + msg.chat.title + " ] classified as?",
           {
-            'reply_markup': Utils.createInlineKeyboardMarkup(keyboardData)
+            'reply_markup': Utils.createInlineKeyboardMarkup(keyboardData, 2)
           }
         );
       }
@@ -478,7 +554,7 @@ uncleLeeBot.on('callback_query', (cbq) => {
       // that they want to set now
       uncleLeeBot.sendMessage(
         userId,
-        Messages.PROMPT_ADMIN_NEW_MSG,
+        Messages.UTIL_MSGS.PROMPT_ADMIN_NEW_MSG,
         {
           'reply_markup': {
             'force_reply': true
@@ -599,7 +675,7 @@ uncleLeeBot.on('callback_query', (cbq) => {
         {
           'chat_id': cbq.message.chat.id,
           'message_id': cbq.message.message_id,
-          'reply_markup': Utils.createInlineKeyboardMarkup(grpChatIsSgnOpts)
+          'reply_markup': Utils.createInlineKeyboardMarkup(grpChatIsSgnOpts, 2)
         }
       )
       // It is possible that the message has already been edited, and an error is thrown
@@ -612,7 +688,7 @@ uncleLeeBot.on('callback_query', (cbq) => {
       uncleLeeBot.answerCallbackQuery(cbq.id);
     });
   }
-  else if (cbqType === Types.USER_SELECT_REGION) {
+  else if (cbqType === Types.USER_SELECT_COVID_REGION) {
     // Answer the callback query! (MANDATORY)
     uncleLeeBot.answerCallbackQuery(cbq.id);
     switch (cbqValue) {
@@ -751,6 +827,47 @@ uncleLeeBot.on('callback_query', (cbq) => {
       }));
     });
   }
+  else if (cbqType === Types.USER_SELECT_HELP_MSG_REGION) {
+    // Answer the callback query! (MANDATORY)
+    uncleLeeBot.answerCallbackQuery(cbq.id);
+    let helpMsg = "";
+    switch (cbqValue) {
+      // If Singapore was selected
+      case Types.REGION_SG:
+        // Return the help message for Singapore
+        helpMsg = Messages.SG_MSGS.HELP_MSG;
+        break;
+      case Types.REGION_AU_NZ:
+        // Return the help message for Australia / New Zealand
+        helpMsg = Messages.AU_MSGS.HELP_MSG;
+        break;
+    }   
+    uncleLeeBot.editMessageText(
+      helpMsg,
+      {
+        'chat_id': cbq.message.chat.id,
+        'message_id': cbq.message.message_id,
+        'reply_markup': {
+          'inline_keyboard': [[]]
+        }
+      }
+    );
+  }
+  else if (cbqType === Types.USER_SELECT_CBREAKER_FAQ_OPT) {
+    // Answer the callback query! (MANDATORY)
+    uncleLeeBot.answerCallbackQuery(cbq.id);
+    // We respond to the user's circuit breaker FAQ selection
+    uncleLeeBot.editMessageText(
+      Messages.SG_MSGS.CB_RULES_ANS_MSG[cbqValue],
+      {
+        'chat_id': cbq.message.chat.id,
+        'message_id': cbq.message.message_id,
+        'reply_markup': {
+          'inline_keyboard': [[]]
+        }
+      }
+    );
+  }
 });
 
 // The BAN USER command (From all SGN group chats that the bot administrates)
@@ -833,7 +950,7 @@ uncleLeeBot.onText(regex.adminUpdateGrpMsg, (msg) => {
     if (permittedChats === null) {
       uncleLeeBot.sendMessage(
         msg.from.id,
-        Messages.NOT_PERMITTED_MSG
+        Messages.UTIL_MSGS.NOT_PERMITTED_MSG
       )
     }
     // Else if they do
@@ -847,7 +964,7 @@ uncleLeeBot.onText(regex.adminUpdateGrpMsg, (msg) => {
         msg.from.id,
         "Please select the group chat for which the message should be updated:",
         {
-          'reply_markup': Utils.createInlineKeyboardMarkup(keyboardCallback),
+          'reply_markup': Utils.createInlineKeyboardMarkup(keyboardCallback, 2),
         }
       )
     }
