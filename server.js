@@ -424,11 +424,62 @@ uncleLeeBot.on('channel_post', (msg) => {
   }
 });
 
+// The listener for new users who joined group chats
+uncleLeeBot.on('new_chat_members', (msg) => {
+  // We keep tabs on all users that have entered a group chat
+  if (msg.chat.id !== msg.from.id) {
+    // If this is a message which contains information about new group chat members
+    if (typeof msg.new_chat_members !== 'undefined') {
+      // We store the members' IDs in the Datastore
+      groupAdmin.storeGrpChatMembers(msg.chat.id, msg.chat.title, msg.new_chat_members)
+        .then((isSuccess) => {
+          if (!(isSuccess)) {
+            uncleLeeBot.sendMessage(
+              Number(process.env.DOHPAHMINE),
+              "Ah boy ah, there was an issue storing the users' details for the group chat:\n\n" + msg.chat.title
+            );
+          }
+        });
+    }
+  }
+});
+
+// The listener for users who have left group chats 
+// (Note: This is not used since no 'left chat' messages are made on the group chats)
+uncleLeeBot.on('left_chat_member', (msg) => {
+  console.log("A member has left the group chat");
+  // We update our list of chat members by removing information about those who have left the chat
+  if (msg.chat.id !== msg.from.id) {
+    // If this is a message which contains information about a group chat member that left
+    if (typeof msg.left_chat_member !== 'undefined') {
+      // We remove this member's membership from the group chat
+      groupAdmin.removeGrpChatMember(msg.chat.id, msg.left_chat_member)
+        .then((isSuccess) => {
+          if (!(isSuccess)) {
+            uncleLeeBot.sendMessage(
+              Number(process.env.DOHPAHMINE),
+              "Ah boy ah, there was an issue removing the users' membership details for the group chat:\n\n" + msg.chat.title
+            )
+          }
+        })
+    }
+  }
+});
+
 // The listener for messages from users
 uncleLeeBot.on('message', (msg) => {
-  // We do a spam analysis on the message, if the text isn't empty
-  if (typeof msg.text !== 'undefined') {
-    spamApi.detectMessage(msg.text).then((isSpam) => {
+  // We do a spam analysis on the message, if the text or caption isn't empty
+  if ((typeof msg.text !== 'undefined') || (typeof msg.caption !== 'undefined')) {
+    let spamTxt = "";
+
+    if (typeof msg.text !== 'undefined') {
+      spamTxt = (msg.text).toString();
+    }
+    else if (typeof msg.caption !== 'undefined') {
+      spamTxt = (msg.caption).toString();
+    }
+
+    spamApi.detectMessage(spamTxt).then((isSpam) => {
       if (isSpam) {
         // We kick the user out first upon spam detection
         uncleLeeBot.kickChatMember(msg.chat.id, msg.from.id).then((isSuccess) => {
@@ -440,7 +491,7 @@ uncleLeeBot.on('message', (msg) => {
               "Group chat title: " + msg.chat.title + "\n" +
               "Kicked user: " + msg.from.first_name + " " + msg.from.last_name + "\n" +
               " (" + msg.from.username + ")" + "\n" +
-              "For spamming: " + msg.text
+              "For spamming: " + spamTxt
             );
           }
         })
@@ -471,21 +522,33 @@ uncleLeeBot.on('message', (msg) => {
 
   // If we have a forwarded message from myself, then start getting details about the original sender
   if (typeof msg.forward_from !== 'undefined') {
-        // Check if I am in the chat ID with myself and Uncle Lee, and this message came from me (and not Uncle Lee)
+    // Check if I am in the chat ID with myself and Uncle Lee, and this message came from me (and not Uncle Lee)
     if ((msg.chat.id === msg.from.id) && (msg.from.id === Number(process.env.DOHPAHMINE))) {
-      // Get the details of the forwarded message
-      uncleLeeBot.sendMessage(
-        Number(process.env.DOHPAHMINE),
-        "Ah boy ah,\n\n" +
-        "Message from original sender: " + msg.text + "\n" +
-        "Name of original sender: " + msg.forward_from.first_name + " " + msg.forward_from.last_name + "\n" +
-        "Username of original sender: " + msg.forward_from.username + "\n" +
-        "[ USER ] ID of original sender: " + msg.forward_from.id + "\n" +
-        "Details of forwarder:\n\n" +
-        "Name of forwarder: " + msg.from.first_name + " " + msg.from.last_name + "\n" +
-        "Username of forwarder: " + msg.from.username + "\n" +
-        "User ID of forwarder: " + msg.from.id
-      )
+      let msgTxt = "";
+
+      if (typeof msg.text !== 'undefined') {
+        msgTxt = msg.text;
+      }
+      else if (typeof msg.caption !== 'undefined') {
+        msgTxt = msg.caption;
+      }
+
+      // If the forward_from is not undefined
+      if (typeof msg.forward_from !== 'undefined') {
+        // Get the details of the forwarded message
+        uncleLeeBot.sendMessage(
+          Number(process.env.DOHPAHMINE),
+          "Ah boy ah,\n\n" +
+          "Message from original sender: " + msgTxt + "\n" +
+          "Name of original sender: " + msg.forward_from.first_name + " " + msg.forward_from.last_name + "\n" +
+          "Username of original sender: " + msg.forward_from.username + "\n" +
+          "[ USER ] ID of original sender: " + msg.forward_from.id + "\n" +
+          "Details of forwarder:\n\n" +
+          "Name of forwarder: " + msg.from.first_name + " " + msg.from.last_name + "\n" +
+          "Username of forwarder: " + msg.from.username + "\n" +
+          "User ID of forwarder: " + msg.from.id
+        );
+      }
     }
   }
 });
