@@ -4,7 +4,7 @@ module.exports = {
     return axios({
       method: "post",
       url: process.env.DETECT_SPAM_FUNC_URL, 
-      data: { usr_msg: msg },
+      data: { usr_msg: msg.toString() },
       "headers": {"Content-Type": "application/json"},
       validateStatus: ((status) => {
         return true;
