@@ -5,7 +5,6 @@ Promise.config({
 });
 const express = require('express');
 const bodyParser = require('body-parser');
-const groupAdmin = require('./grp-chat');
 const regex = require('./regex');
 const botCommands = require('./commands/cmds');
 const Listener = require('./listeners/listener');
