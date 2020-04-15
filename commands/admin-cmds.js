@@ -151,6 +151,21 @@ module.exports = {
                 return isSuccess;
               })
               .then((isSuccess) => {
+                // If kicking out the user was a success
+                if (isSuccess) {
+                  // We remove this member's membership from the group chat
+                  groupAdmin.removeGrpChatMember(msg.chat.id, msg.left_chat_member)
+                  .then((isSuccess) => {
+                    if (!(isSuccess)) {
+                      uncleLeeBot.sendMessage(
+                        Number(process.env.DOHPAHMINE),
+                        "Ah boy ah, there was an issue removing the users' membership details for the group chat:\n\n" + msg.chat.title
+                      )
+                    }
+                  })
+                }
+              })
+              .then((isSuccess) => {
                 // We retrieve the group chat name with the group chat ID
                 groupAdmin.getGrpChatNameWithId(Number(grpChatId))
                   .then((grpChatName) => {
