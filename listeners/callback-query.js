@@ -9,27 +9,27 @@ module.exports = {
 
     switch (cbqType) {
       case (Types.UPDATE_GROUP_MESSAGE):
-        this.onGrpMsgUpdate(uncleLeeBot, cbq, cbqValue);
+        module.exports.onGrpMsgUpdate(uncleLeeBot, cbq, cbqValue);
         break;
       
       case (Types.REGISTER_GROUP_CHAT):
-        this.onGrpChatRegister(uncleLeeBot, cbq, cbqValue);
+        module.exports.onGrpChatRegister(uncleLeeBot, cbq, cbqValue);
         break;
 
       case (Types.USER_SELECT_COVID_REGION):
-        this.onCovidRegionSelection(uncleLeeBot, cbq, cbqValue);
+        module.exports.onCovidRegionSelection(uncleLeeBot, cbq, cbqValue);
         break;
 
       case (Types.REGISTER_GROUP_CHAT_IS_SGN):
-        this.onMarkGrpChatAsSgn(uncleLeeBot, cbq, cbqType);
+        module.exports.onMarkGrpChatAsSgn(uncleLeeBot, cbq, cbqType);
         break;
 
       case (Types.USER_SELECT_HELP_MSG_REGION):
-        this.onRegionHelpSelect(uncleLeeBot, cbq, cbqValue);
+        module.exports.onRegionHelpSelect(uncleLeeBot, cbq, cbqValue);
         break;
 
       case (Types.USER_SELECT_CBREAKER_FAQ_OPT):
-        this.onCBreakerQnSelect(uncleLeeBot, cbq, cbqValue);
+        module.exports.onCBreakerQnSelect(uncleLeeBot, cbq, cbqValue);
         break;
 
       default:
