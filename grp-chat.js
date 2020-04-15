@@ -3,7 +3,7 @@ module.exports = {
     let Firestore = require('@google-cloud/firestore');
     let db = new Firestore();
 
-    let grpChatMembRef = db.collection('grpChatMembers').doc((user.id).toString());
+    let grpChatMembRef = db.collection('grpChatMembers').doc((exGrpChatUser.id).toString());
 
     return db.runTransaction((t) => {
       return t.get(grpChatMembRef)
@@ -38,7 +38,7 @@ module.exports = {
             if (currGrpChatMembership.hasOwnProperty(grpChatId.toString())) {
               delete currGrpChatMembership[grpChatId.toString()];
               console.log(currGrpChatMembership);
-              t.set(grpChatMembRef, {'grpChats': currGrpChatMembership});
+              t.update(grpChatMembRef, {'grpChats': currGrpChatMembership});
             }
           }
         });
