@@ -33,6 +33,8 @@ module.exports = {
         break;
 
       default:
+        // If this doesn't match any known cbqType, we just answer the callback query
+        uncleLeeBot.answerCallbackQuery(cbq.id);
         break;
     }
   },
