@@ -135,89 +135,39 @@ module.exports = {
   banUserById: (uncleLeeBot, msg) => {
     // Ensure that this command came from me
     if (msg.from.id === Number(process.env.DOHPAHMINE)) {
+      let groupAdmin = require('../grp-chat');
       let splitMsg = msg.text.split(' ', 2);
       // We retrieve the information about the user that we want to ban
       let userToBan = Number(splitMsg[1]);
-      let groupAdmin = require('../grp-chat');
       // If the user ID is valid
       if (isNaN(userToBan) === false) {
         // We gather all SGN group chats that the bot is a part of
-        groupAdmin.getAllSgnChats().then((grpChatIds) => {
-          let kickPromises = [];
-          let kickUserSgnChats = (grpChatId, userToBan) => {
-            // We kick the user out of the group
-            uncleLeeBot.kickChatMember(grpChatId, userToBan)
-              .then((isSuccess) => {
-                return isSuccess;
-              })
-              .then((isSuccess) => {
-                // If kicking out the user was a success
-                if (isSuccess) {
-                  // We remove this member's membership from the group chat
-                  groupAdmin.removeGrpChatMember(msg.chat.id, msg.left_chat_member)
-                  .then((isSuccess) => {
-                    if (!(isSuccess)) {
-                      uncleLeeBot.sendMessage(
-                        Number(process.env.DOHPAHMINE),
-                        "Ah boy ah, there was an issue removing the users' membership details for the group chat:\n\n" + msg.chat.title
-                      )
-                    }
-                  })
-                }
-              })
-              .then((isSuccess) => {
-                // We retrieve the group chat name with the group chat ID
-                groupAdmin.getGrpChatNameWithId(Number(grpChatId))
-                  .then((grpChatName) => {
-                    // If we get a null, this means there's no result
-                    if (grpChatName === null) {
-                      // Notify the admin
-                      uncleLeeBot.sendMessage(
-                        Number(process.env.DOHPAHMINE),
-                        "Something has gone wrong, there is no group chat with this ID:\n" + grpChatId
-                      );
-                    }
-                    else {
-                      if (isSuccess) {
-                        uncleLeeBot.sendMessage(
-                          Number(process.env.DOHPAHMINE),
-                          "The user has been removed from group:\n" + grpChatName
-                        );
-                      }
-                      else {
-                        uncleLeeBot.sendMessage(
-                          Number(process.env.DOHPAHMINE),
-                          "Could not kick this user out of the group:\n" + grpChatName
-                        );
-                      }
-                      return;
-                    }
-                  });
-              })
+        groupAdmin.getAllSgnChats()
+          .then((grpChatIds) => {
+            // And kick the user out of all those group chats, and await their promises
+            let kickPromises = [];
+
+            for (idx in grpChatIds) {  
+              kickPromises.push(
+                module.exports.removeUserFromGrpChat(uncleLeeBot, grpChatIds[idx], userToBan)
+              );
+            };
+
+            Promise.all(kickPromises)
               .catch((err) => {
-                throw err;
+                uncleLeeBot.sendMessage(
+                  Number(process.env.DOHPAHMINE),
+                  "Ah boy ah, we have a problem kicking out the user from the group chat:\n\n" + err
+                )
               });
-          }
-
-          for (idx in grpChatIds) {  
-            kickPromises.push(kickUserSgnChats(grpChatIds[idx], userToBan));
-          };
-
-          Promise.all(kickPromises)
-            .catch((err) => {
-              uncleLeeBot.sendMessage(
-                Number(process.env.DOHPAHMINE),
-                "Ah boy ah, we have a problem kicking out the user from the group chat:\n\n" + err
-              )
-            });
-        })
-        // Send an error message to me if there's an error
-        .catch((err) => {
-          uncleLeeBot.sendMessage(
-            Number(process.env.DOHPAHMINE),
-            "Ah boy ah, there was a problem trying to retrieve the SGN group chat IDs:\n\n" + err
-          )
-        })
+          })
+          // Send an error message to me if there's an error
+          .catch((err) => {
+            uncleLeeBot.sendMessage(
+              Number(process.env.DOHPAHMINE),
+              "Ah boy ah, there was a problem trying to retrieve the SGN group chat IDs:\n\n" + err
+            )
+          })
       }
       // Else, send a message to inform me
       else {
@@ -229,5 +179,80 @@ module.exports = {
         )
       }
     }
-  }
+  },
+
+  removeUserFromGrpChat: (uncleLeeBot, grpChatId, userToBan) => {
+    // We get information about the user from the group chat
+    uncleLeeBot.getChatMember(
+      grpChatId,
+      userToBan
+    )
+      .then((chatMember) => {
+        // If we do find information about the user
+        if ((typeof chatMember !== 'undefined') && (chatMember !== null)) {
+          // We kick the user out of the group
+          uncleLeeBot.kickChatMember(grpChatId, userToBan)
+            .then((isSuccess) => {
+              // If kicking out the user was a success
+              if (isSuccess) {
+                // We strip their membership status from that group chat
+                module.exports.stripUserMembershipDatastore(uncleLeeBot, grpChatId, chatMember.user);
+              }
+              return isSuccess;
+            })
+            .then((isSuccess) => {
+              module.exports.notifyBanOutcome(uncleLeeBot, grpChatId, isSuccess);
+            })
+            .catch((err) => {
+              throw err;
+            });
+        }
+      })
+  },
+
+  stripUserMembershipDatastore: (uncleLeeBot, grpChatId, chatMember) => {
+    let groupAdmin = require('../grp-chat');
+    // We remove this member's membership from the group chat
+    groupAdmin.removeGrpChatMember(grpChatId, chatMember)
+      .then((isSuccess) => {
+        if (!(isSuccess)) {
+          uncleLeeBot.sendMessage(
+            Number(process.env.DOHPAHMINE),
+            "Ah boy ah, there was an issue removing the users' membership details for the group chat:\n\n" + msg.chat.title
+          )
+          
+        }
+      })
+  },
+
+  notifyBanOutcome: (uncleLeeBot, grpChatId, isSuccess) => {
+    let groupAdmin = require('../grp-chat');
+    // We retrieve the group chat name with the group chat ID
+    groupAdmin.getGrpChatNameWithId(Number(grpChatId))
+      .then((grpChatName) => {
+        // If we get a null, this means there's no result
+        if (grpChatName === null) {
+          // Notify the admin
+          uncleLeeBot.sendMessage(
+            Number(process.env.DOHPAHMINE),
+            "Something has gone wrong, there is no group chat with this ID:\n" + grpChatId
+          );
+        }
+        else {
+          if (isSuccess) {
+            uncleLeeBot.sendMessage(
+              Number(process.env.DOHPAHMINE),
+              "The user has been removed from group:\n" + grpChatName
+            );
+          }
+          else {
+            uncleLeeBot.sendMessage(
+              Number(process.env.DOHPAHMINE),
+              "Could not kick this user out of the group:\n" + grpChatName
+            );
+          }
+          return;
+        }
+      });
+  },
 }
