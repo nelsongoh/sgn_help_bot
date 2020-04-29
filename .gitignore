@@ -9,3 +9,5 @@ UncleLeeBot.code-workspace
 .gcloudignore
 local_testing
 app.yaml
+deploy_cmds.txt
+*.model
