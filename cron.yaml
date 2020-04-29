@@ -11,12 +11,12 @@ cron:
 
 - description: "Australia COVID-19 Case Breakdown Announcement"
   url: /covid-19/au/announce
-  schedule: every 3 hours from 09:05 to 21:05
+  schedule: every 24 hours from 21:05 to 21:10
   timezone: Australia/Sydney
 
 - description: "Singapore COVID-19 Case Breakdown Announcement"
   url: /covid-19/sg/announce
-  schedule: every 3 hours from 09:05 to 21:05
+  schedule: every 24 hours from 21:05 to 21:10
   timezone: Asia/Singapore
 
 # - description: "Australia Group Chats Broadcast"
