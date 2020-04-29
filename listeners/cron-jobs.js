@@ -81,6 +81,7 @@ module.exports = {
   onAUCovidAnnounce: (uncleLeeBot, res) => {
     let covidCases = require('../covid-cases');
     let Types = require('../type_constants');
+    let groupAdmin = require('../grp-chat');
     // Retrieve the latest COVID-19 cases for AU
     covidCases.getCovidCasesAU().then((caseInfo) => {
       // Then we retrieve the group chats who are in the AU / NZ region
@@ -110,6 +111,7 @@ module.exports = {
   onSGCovidAnnounce: (uncleLeeBot, res) => {
     let covidCases = require('../covid-cases');
     let Types = require('../type_constants');
+    let groupAdmin = require('../grp-chat');
     // Retrieve the latest COVID-19 cases for AU
     covidCases.getCovidCasesSG().then((caseInfo) => {
       // Then we retrieve the group chats who are in the SG region
