@@ -22,7 +22,7 @@ module.exports = {
   'TELEGRAM_GRP_CHAT_CHN': 'channel',
 
   // Official Singapore Global Network Channel link
-  'OFFICIAL_SGN_CHN_TITLE': 'Singapore Global Network Channel 🇸🇬',
+  'OFFICIAL_SGN_CHN_TITLE': 'Singapore Global Network 🇸🇬',
 
   // The websites for the COVID-19 case numbers
   'COVID_19_AU_GOV': 'https://www.health.gov.au/news/health-alerts/novel-coronavirus-2019-ncov-health-alert/coronavirus-covid-19-current-situation-and-case-numbers',
