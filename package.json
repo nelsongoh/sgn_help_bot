@@ -22,7 +22,7 @@
   "homepage": "https://github.com/nelsongoh/sgn_sydney_bot#readme",
   "dependencies": {
     "@google-cloud/firestore": "^3.7.1",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "body-parser": "^1.19.0",
     "cheerio": "^1.0.0-rc.3",
     "express": "^4.17.1",
