@@ -1,18 +1,18 @@
 cron:
-- description: "COVID-19 cases update (Australia)"
-  url: /covid-19/au/fetch
-  schedule: every 3 hours from 09:00 to 21:00
-  timezone: Australia/Sydney
+# - description: "COVID-19 cases update (Australia)"
+#   url: /covid-19/au/fetch
+#   schedule: every 3 hours from 09:00 to 21:00
+#   timezone: Australia/Sydney
 
 - description: "COVID-19 cases update (Singapore)"
   url: /covid-19/sg/fetch
   schedule: every 3 hours from 09:00 to 21:00
   timezone: Asia/Singapore
 
-- description: "Australia COVID-19 Case Breakdown Announcement"
-  url: /covid-19/au/announce
-  schedule: every 24 hours from 21:05 to 21:10
-  timezone: Australia/Sydney
+# - description: "Australia COVID-19 Case Breakdown Announcement"
+#   url: /covid-19/au/announce
+#   schedule: every 24 hours from 21:05 to 21:10
+#   timezone: Australia/Sydney
 
 - description: "Singapore COVID-19 Case Breakdown Announcement"
   url: /covid-19/sg/announce
