@@ -5,7 +5,7 @@ module.exports = {
   "http://bit.ly/covid19wiki\n\n" +
 
   "The official Telegram channel for the Singapore Global Network (SGN):\n" +
-  "https://t.me/SGNchannel",
+  `https://t.me/singaporeglobalnetwork`,
 
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -18,5 +18,5 @@ module.exports = {
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
   SGN_CHN_ANNOUNCE_MSG: "[ SGN UPDATE ]\n\n" +
-  "An update has been posted on the official SGN channel. Please subscribe here to check it out:\nhttps://t.me/SGNchannel",
+  `An update has been posted on the official SGN channel. Please subscribe here to check it out:\nhttps://t.me/singaporeglobalnetwork`,
 }
