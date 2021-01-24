@@ -62,7 +62,7 @@ module.exports = {
     let Messages = require('../bot_messages/messages');
     uncleLeeBot.sendMessage(
       msg.chat.id,
-      Messages.UTIL_MSGS.INFO_MSG + Messages.UTIL_MSGS.PVT_MSG_OPT,
+      Messages.UTIL_MSGS.INFO_MSG,
       {
         'reply_to_message_id': msg.message_id
       },
